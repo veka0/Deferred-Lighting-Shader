@@ -3,7 +3,7 @@ import { world } from "mojang-minecraft";
 world.events.tick.subscribe(event => {
 	for (var player of world.getPlayers()) {
 		var v = player.getComponent("minecraft:inventory").container.getItem(player.selectedSlot);
-		if (v && ["deferred:add_light", "deferred:fog_switch", "deferred:color_randomizer", "deferred:remove_light"].includes(v.id)) {
+		if (v && ["deferred:add_light", "deferred:fog_toggle", "deferred:color_randomizer", "deferred:remove_light"].includes(v.id)) {
 			try {
 				player.runCommand(`playanimation @e[r=30,type=deferred:point_light] animation.deferred.point_light.lamp`);
 			} catch {}
