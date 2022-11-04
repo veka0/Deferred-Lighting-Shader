@@ -1,0 +1,42 @@
+{
+	"format_version":"1.16.100",
+	"minecraft:item":{
+		"description":{
+			"identifier":"deferred:add_light",
+			"category":"equipment"
+		},
+		"components":{
+			"minecraft:hand_equipped":true,
+			"minecraft:max_stack_size":1,
+			"minecraft:creative_category":{
+				"parent":"equipment"
+			},
+			"minecraft:icon":{
+				"texture":"stick"
+			},
+			"minecraft:render_offsets":"tools",
+			"minecraft:display_name":{
+				"value":"Create light source"
+			},
+			"minecraft:entity_placer": {
+				"entity": "deferred:point_light"
+			},
+			"minecraft:on_use":{
+				"on_use": {
+					"event": "event"
+				}
+			},
+			"minecraft:foil": true,
+			"minecraft:can_destroy_in_creative":false
+		},
+		"events":{
+			"event":{
+				"run_command":{
+					"command":[
+						"summon deferred:point_light ~~0.5~"
+					]
+				}
+			}
+		}
+	}
+}

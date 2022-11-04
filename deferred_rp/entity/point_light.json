@@ -1,0 +1,22 @@
+{
+	"format_version": "1.10.0",
+	"minecraft:client_entity": {
+		"description": {
+			"identifier": "deferred:point_light",
+			"animations": {
+				"ac": "controller.animation.deferred.point_light",
+				"anim": "animation.deferred.point_light.lamp" // Note: for whatever reason it doesn't work without any animations specified.
+			},
+			"particle_effects": {
+				"light_volume": "deferred:light_volume",
+				"light_volume_fog": "deferred:light_volume_fog",
+				"lamp": "deferred:lamp"
+			},
+			"scripts": {
+				"initialize": ["v.emitted = 0;"],
+				"animate": ["ac"],
+				"should_update_bones_and_effects_offscreen": true
+			}
+		}
+	}
+}

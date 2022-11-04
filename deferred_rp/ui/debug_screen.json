@@ -1,0 +1,37 @@
+{
+	"namespace": "debug_screen",
+
+	"deferred_final_pass": {
+		"type": "custom",
+		"renderer": "paper_doll_renderer",
+		"offset": [0, "100%"]
+	},
+	
+	"content_panel": {
+		"modifications": [
+			{
+				"array_name": "controls",
+				"operation": "insert_back",
+				"value": {
+					"deferred_final_pass@debug_screen.deferred_final_pass": {}
+				}
+			}
+		]
+	},
+	
+	"debug_screen@common.base_screen": {
+		"send_telemetry": false,
+		"screen_not_flushable": true,
+		"render_game_behind": true,
+		"is_showing_menu": false,
+		"low_frequency_rendering": true,
+		"is_modal": true,
+		"should_steal_mouse": false,
+		"render_only_when_topmost": false,
+		"screen_draws_last": false,
+		"always_accepts_input": true,
+		"$screen_content": "debug_screen.content_panel",
+		"$screen_animations": [],
+		"$use_loading_bars": false
+	}
+}

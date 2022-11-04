@@ -1,0 +1,189 @@
+{
+	"format_version": "1.16.0",
+	"minecraft:entity": {
+		"description": {
+			"identifier": "deferred:point_light",
+			"is_summonable": true,
+			"is_spawnable": true,
+			"is_experimental": false,
+			"properties":{
+				"deferred:color_r":{
+					"values":{
+						"min":0,
+						"max":4095
+					},
+					"default": 255,
+					"client_sync": true
+				},
+				"deferred:color_g":{
+					"values":{
+						"min":0,
+						"max":4095
+					},
+					"default": 255,
+					"client_sync": true
+				},
+				"deferred:color_b":{
+					"values":{
+						"min":0,
+						"max":4095
+					},
+					"default": 255,
+					"client_sync": true
+				},
+				"deferred:fog":{
+					"values": [true, false],
+					"default": true,
+					"client_sync": true
+				}
+			}
+		},
+		"components": {
+			"minecraft:custom_hit_test": {
+				"hitboxes": [
+					{
+						"pivot": [0, 0, 0],
+						"width": 0,
+						"height": 0
+					}
+				]
+			},
+			"minecraft:damage_sensor": {
+				"triggers": [
+					{
+						"cause": "all",
+						"deals_damage": false
+					}
+				]
+			},
+			"minecraft:health": {
+				"value": 1,
+				"max": 1,
+				"min": 1
+			},
+			"minecraft:pushable": {
+				"is_pushable": false,
+				"is_pushable_by_piston": false
+			},
+			"minecraft:physics": {
+				"has_gravity": false,
+				"has_collision": false
+			},
+			"minecraft:collision_box": {
+				"width": 0,
+				"height": 0
+			},
+			"minecraft:nameable": {
+				"always_show": true,
+				"allow_name_tag_renaming": false
+			},
+			"minecraft:persistent": {},
+			"minecraft:knockback_resistance": {
+				"value": 1
+			}
+		},
+		"component_groups": {
+			"deferred:despawn": {
+				"minecraft:instant_despawn": {}
+			},
+			// This component group is used for notifying the client about property changes.
+			"deferred:sync": {
+				"minecraft:is_illager_captain": {}
+			}
+		},
+		"events": {
+			"deferred:despawn": {
+				"add": {
+					"component_groups": [ "deferred:despawn" ]
+				}
+			},
+			"deferred:switch_fog": {
+				"sequence": [
+					{
+						"filters": { "test": "has_tag", "value": "deferred:fog" },
+						
+						"run_command": {
+							"command": [
+								"tag @s remove deferred:fog"
+							]
+						}
+					},
+					{
+						"filters": { "test": "has_tag", "operator": "not", "value": "deferred:fog" },
+						
+						"run_command": {
+							"command": [
+								"tag @s add deferred:fog"
+							]
+						}
+					},
+					{
+						"trigger": {
+							"event": "deferred:sync"
+						}
+					}
+				]
+			},
+			"deferred:sync": {
+				"sequence": [
+					{
+						"add": {
+							"component_groups": [ "deferred:sync" ]
+						},
+						"set_actor_property":{
+							"deferred:color_r": "q.scoreboard('r')",
+							"deferred:color_g": "q.scoreboard('g')",
+							"deferred:color_b": "q.scoreboard('b')"
+						}
+					},
+					{
+						"filters": { "test": "has_tag", "value": "deferred:fog" },
+						"set_actor_property": { "deferred:fog": true }
+					},
+					{
+						"filters": { "test": "has_tag", "operator": "not", "value": "deferred:fog" },
+						"set_actor_property": { "deferred:fog": false }
+					}
+				]
+			},
+			"deferred:random_color": {
+				"sequence": [
+					{
+						"run_command": {
+							"command": [
+								"scoreboard players random @s r 0 4095",
+								"scoreboard players random @s g 0 4095",
+								"scoreboard players random @s b 0 4095"
+							]
+						}
+					},
+					{
+						"trigger": {
+							"event": "deferred:sync"
+						}
+					}
+				]
+			},
+			"minecraft:entity_spawned": {
+				"sequence": [
+					{
+						"run_command": {
+							"command": [
+								"tp ~~0.5~",
+								"scoreboard objectives add r dummy",
+								"scoreboard objectives add g dummy",
+								"scoreboard objectives add b dummy",
+								"tag @s add deferred:fog"
+							]
+						}
+					},
+					{
+						"trigger": {
+							"event": "deferred:random_color"
+						}
+					}
+				]
+			}
+		}
+	}
+}

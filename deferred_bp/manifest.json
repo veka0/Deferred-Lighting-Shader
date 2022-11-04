@@ -1,0 +1,36 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "Deferred Lighting Shader BP",
+		"description": "§l§6Experimental toggles:§r§o§3\n- Holiday Creator Features\n- Upcoming Creator Features\n- GameTest Framework\n- Molang Features",
+		"uuid": "e4aa8cbb-cfe9-4e81-ba61-964318ccd52f",
+		"version": [1, 0, 0],
+		"min_engine_version": [1, 17, 10]
+	},
+	"modules": [
+		{
+			"description": "",
+			"type": "data",
+			"uuid": "81a742cb-901d-49f5-b632-41bdef96ee12",
+			"version": [1, 0, 0]
+		},
+		{
+			"description": "",
+			"uuid": "239c134f-67bf-4738-9bcc-8c69d31b1f72",
+			"version": [1, 0, 0],
+			"type": "javascript",
+			"entry": "scripts/Main.js"
+		}
+	],
+	"dependencies": [
+		{
+			"description": "mojang-minecraft",
+			"uuid": "b26a4d4c-afdf-4690-88f8-931846312678",
+			"version": [0, 1, 0]
+		},
+		{
+			"uuid": "93fde93e-875b-473c-a850-6481bd014bca",
+			"version": [1, 0, 0]
+		}
+	]
+}

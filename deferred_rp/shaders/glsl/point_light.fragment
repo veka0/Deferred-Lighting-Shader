@@ -1,0 +1,78 @@
+#include "fragmentHeader.h"
+#include "uniformWorldConstants.h"
+#line 3
+
+precision highp float;
+
+inout vec4 gl_FragColor;
+
+in highp vec4 color;
+in highp vec3 position;
+in highp vec3 origin;
+
+const float Kc = 1.0;
+const float Kl = 0.14;
+const float Kq = 0.07;
+
+const float specShine = 10.0;
+const float specIntensity= 0.1;
+const float fogIntensity = 0.05;
+
+
+const float ditherSpread = 5.0/255.0;
+
+const int bayer8[64] = int[64](
+ 0, 32,  8, 40,  2, 34, 10, 42,
+48, 16, 56, 24, 50, 18, 58, 26,
+12, 44,  4, 36, 14, 46,  6, 38,
+60, 28, 52, 20, 62, 30, 54, 22,
+ 3, 35, 11, 43,  1, 33,  9, 41,
+51, 19, 59, 27, 49, 17, 57, 25,
+15, 47,  7, 39, 13, 45,  5, 37,
+63, 31, 55, 23, 61, 29, 53, 21
+);
+
+
+float calcFogLight(float fragDist, vec3 dir) {
+	float d = dot(dir, origin.xyz);
+	vec3 orthLvec = origin.xyz - dir * d;
+	
+	float h = length(orthLvec);
+	float oL = length(origin.xyz - orthLvec)*sign(d);
+
+	return (atan((fragDist-oL)/h) - atan(-oL/h))/h;
+}
+
+void main()
+{
+	float i = mod(gl_FragCoord.x-0.5, 2.0);
+	
+	vec3 albedo = -dFdx((1.0-i)*gl_FragColor.rgb);
+	
+	float viewZ = PROJ[3][2] / ((gl_LastFragDepthARM * 2.0 - 1.0) + PROJ[2][2]);
+	vec3 viewPos = viewZ * position / position.z;
+	
+	vec3 L = origin - viewPos;
+	float dist = length(L);
+	L /= dist;
+	
+	vec3 N = normalize(cross(dFdy(viewPos), dFdx(viewPos)));
+	
+	float viewLen = length(viewPos);
+	vec3 viewVec = -viewPos/viewLen;
+	
+	vec3 h = normalize(L+viewVec);
+	
+	float specular = specIntensity*pow(max(dot(N, h), 0.0), specShine);
+	float diffuse = dot(N, L);
+	float attenuation = 1.0 / (Kc + Kl * dist + Kq * dist*dist);
+	
+	float dither = ditherSpread*((float(bayer8[int(0.5*round(gl_FragCoord.x-0.5))%8+8*(int(0.5*round(gl_FragCoord.y-0.5))%8)]+1))/64.0-0.5);
+	
+#ifdef VOLUMETRIC_FOG
+	float fog = fogIntensity*calcFogLight(viewLen, normalize(position.xyz));
+	gl_FragColor = i*vec4((attenuation * step(0.0, diffuse) * (specular + diffuse*albedo) + fog) * 16.0*color.rgb + dither, 1.0);
+#else
+	gl_FragColor = i*vec4((attenuation * step(0.0, diffuse) * (specular + diffuse*albedo)) * 16.0*color.rgb + dither, 1.0);
+#endif
+}

@@ -1,0 +1,1 @@
+execute @a[tag=deferred:move] ~~~ tp @e[c=1, r=10, type=deferred:point_light] ~~~

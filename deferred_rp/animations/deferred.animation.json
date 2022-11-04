@@ -1,0 +1,15 @@
+{
+	"format_version": "1.10.0",
+	"animations": {
+		"animation.deferred.point_light.lamp": {
+			"loop": false,
+			"animation_length": 0.05,
+			"particle_effects": {
+				"0": {
+					"effect": "lamp",
+					"pre_effect_script": "v.r = q.actor_property('deferred:color_r'); v.g = q.actor_property('deferred:color_g'); v.b = q.actor_property('deferred:color_b'); t.max = math.max(v.r, math.max(v.g, v.b)); v.r = v.r/t.max; v.g = v.g/t.max; v.b = v.b/t.max;"
+				}
+			}
+		}
+	}
+}

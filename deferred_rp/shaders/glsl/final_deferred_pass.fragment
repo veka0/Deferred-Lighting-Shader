@@ -1,0 +1,10 @@
+#include "fragmentHeader.h"
+
+precision highp float;
+
+inout vec4 gl_FragColor;
+
+void main()
+{
+	gl_FragColor = vec4(dFdx(mod(gl_FragCoord.x-0.5, 2.0)*gl_FragColor.rgb), 1.0);
+}

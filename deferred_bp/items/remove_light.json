@@ -1,0 +1,44 @@
+{
+	"format_version":"1.16.100",
+	"minecraft:item":{
+		"description":{
+			"identifier":"deferred:remove_light",
+			"category":"equipment"
+		},
+		"components":{
+			"minecraft:hand_equipped":true,
+			"minecraft:max_stack_size":1,
+			"minecraft:creative_category":{
+				"parent":"equipment"
+			},
+			"minecraft:icon":{
+				"texture":"bone"
+			},
+			"minecraft:render_offsets":"tools",
+			"minecraft:display_name":{
+				"value":"Remove light source"
+			},
+			"minecraft:on_use_on":{
+				"on_use_on": {
+					"event": "event"
+				}
+			},
+			"minecraft:on_use":{
+				"on_use": {
+					"event": "event"
+				}
+			},
+			"minecraft:foil": true,
+			"minecraft:can_destroy_in_creative":false
+		},
+		"events":{
+			"event":{
+				"run_command":{
+					"command":[
+						"event entity @e[c=1, r=10, type=deferred:point_light] deferred:despawn"
+					]
+				}
+			}
+		}
+	}
+}

@@ -1,0 +1,65 @@
+{
+	"format_version": "1.10.0",
+	"particle_effect": {
+		"description": {
+			"identifier": "deferred:light_volume_fog",
+			"basic_render_parameters": {
+				"material": "particles_opaque",
+				"texture": "textures/particle/particles"
+			}
+		},
+		"components": {
+			"minecraft:emitter_lifetime_once": {
+				"max_lifetime": 0
+			},
+			"minecraft:emitter_rate_instant": {
+				"num_particles": 0
+			},
+			"minecraft:emitter_lifetime_events": {
+				"creation_event": "emit"
+			}
+		},
+		"events": {
+			"emit": {
+				"sequence": [
+					{
+						"particle_effect": {
+							"effect": "deferred:plane_right_fog",
+							"type": "emitter_bound"
+						}
+					},
+					{
+						"particle_effect": {
+							"effect": "deferred:plane_left_fog",
+							"type": "emitter_bound"
+						}
+					},
+					{
+						"particle_effect": {
+							"effect": "deferred:plane_up_fog",
+							"type": "emitter_bound"
+						}
+					},
+					{
+						"particle_effect": {
+							"effect": "deferred:plane_down_fog",
+							"type": "emitter_bound"
+						}
+					},
+					{
+						"particle_effect": {
+							"effect": "deferred:plane_front_fog",
+							"type": "emitter_bound"
+						}
+					},
+					{
+						"particle_effect": {
+							"effect": "deferred:plane_back_fog",
+							"type": "emitter_bound"
+						}
+					}
+				]
+			}
+		}
+	}
+}

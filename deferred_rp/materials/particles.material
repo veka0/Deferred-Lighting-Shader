@@ -1,0 +1,65 @@
+{
+	"materials": {
+		"version": "1.0.0",
+
+		"particles_light": {
+			"vertexShader": "shaders/point_light.vertex",
+			"vrGeometryShader": "shaders/color_uv.geometry",
+			"fragmentShader": "shaders/point_light.fragment",
+
+			"vertexFields": [
+				{ "field": "Position" },
+				{ "field": "Color" },
+				{ "field": "UV0" }
+			],
+			
+			"variants": [
+				{
+					"u": {
+						"+defines": ["UP"]
+					}
+				},
+				{
+					"d": {
+						"+defines": ["DOWN"]
+					}
+				},
+				{
+					"l": {
+						"+defines": ["LEFT"]
+					}
+				},
+				{
+					"r": {
+						"+defines": ["RIGHT"]
+					}
+				},
+				{
+					"f": {
+						"+defines": ["FRONT"]
+					}
+				},
+				{
+					"b": {
+						"+defines": ["BACK"]
+					}
+				}
+			],
+
+			"+samplerStates": [
+				{
+					"samplerIndex": 0,
+					"textureFilter": "Point"
+				}
+			],
+			"msaaSupport": "NonMSAA",
+			"blendSrc": "One",
+			"blendDst": "One",
+			"+states": [ "Blending", "DisableDepthWrite", "DisableDepthTest" ]
+		},
+		
+		"particles_light_fog:particles_light": {
+			"+defines": [ "VOLUMETRIC_FOG" ]
+		}
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"format_version": 2,
+	"header": {
+		"name": "Deferred Lighting Shader RP",
+		"description": "§l§6Experimental toggles:§r§o§3\n- Holiday Creator Features\n- Upcoming Creator Features\n- GameTest Framework\n- Molang Features",
+		"uuid": "93fde93e-875b-473c-a850-6481bd014bca",
+		"version": [1, 0, 0],
+		"min_engine_version": [1, 13, 0]
+	},
+	"modules": [
+		{
+			"description": "",
+			"type": "resources",
+			"uuid": "0c5cfdaf-fe2f-4d26-8606-3cad2a9b3eab",
+			"version": [1, 0, 0]
+		}
+	],
+	"dependencies": [
+		{
+			"uuid": "e4aa8cbb-cfe9-4e81-ba61-964318ccd52f",
+			"version": [1, 0, 0]
+		}
+	]
+}

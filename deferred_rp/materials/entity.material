@@ -1,0 +1,54 @@
+{
+	"materials": {
+		"version": "1.0.0",
+		"final_deferred_pass:entity_static": {
+			"fragmentShader": "shaders/final_deferred_pass.fragment",
+			"vertexShader": "shaders/final_deferred_pass.vertex",
+			"+states": [ "Blending" ],
+			"msaaSupport": "NonMSAA"
+		},
+		"entity_static": {
+			"vertexShader": "shaders/entity.vertex",
+			"vrGeometryShader": "shaders/entity.geometry",
+			"fragmentShader": "shaders/entity.fragment",
+			"vertexFields": [
+				{ "field": "Position" },
+				{ "field": "Normal" },
+				{ "field": "UV0" }
+			],
+			"variants": [
+				{
+					"skinning": {
+						"+defines": [ "USE_SKINNING" ],
+						"vertexFields": [
+							{ "field": "Position" },
+							{ "field": "BoneId0" },
+							{ "field": "Normal" },
+							{ "field": "UV0" }
+						]
+					}
+				},
+				{
+					"skinning_color": {
+						"+defines": [ "USE_SKINNING", "USE_OVERLAY" ],
+						"+states": [ "Blending" ],
+						"vertexFields": [
+							{ "field": "Position" },
+							{ "field": "BoneId0" },
+							{ "field": "Color" },
+							{ "field": "Normal" },
+							{ "field": "UV0" }
+						]
+					}
+				}
+			],
+			"msaaSupport": "NonMSAA",
+			"+samplerStates": [
+				{
+					"samplerIndex": 0,
+					"textureFilter": "Point"
+				}
+			]
+		}
+	}
+}
