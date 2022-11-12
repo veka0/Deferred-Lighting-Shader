@@ -20,6 +20,7 @@ The following conditions has to be met in order to use this add-on
 	- `deferred:remove_light`
 	- `deferred:color_randomizer`
 	- `deferred:fog_toggle`
+	- When holding either item, all light sources within 30 blocks will have a lightbulb billboard icon displayed over them
 - #### Chat commands
 	- `.help` displays help message
 	- `.col` gets the closest light source color
