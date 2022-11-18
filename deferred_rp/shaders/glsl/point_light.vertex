@@ -1,4 +1,4 @@
-#version 310 es
+#version 300 es
 
 #include "uniformWorldConstants.h"
 
@@ -11,6 +11,7 @@ in highp vec2 TEXCOORD_0;
 out vec4 color;
 out highp vec3 position;
 out highp vec3 origin;
+flat out float ditherFactor;
 
 const float max_scale = 128.0;
 
@@ -18,6 +19,7 @@ void main()
 {
 	gl_Position = WORLDVIEWPROJ * POSITION;
 	
+	ditherFactor = float((gl_VertexID / 4) % 2) - 0.5;
 	int id = gl_VertexID % 4;
 	vec2 test = vec2((id == 1 || id == 2) ? 1 : 0, id < 2 ? 1 : 0);
 	

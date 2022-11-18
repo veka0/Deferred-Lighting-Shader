@@ -4,11 +4,17 @@
 
 precision highp float;
 
-inout vec4 gl_FragColor;
+#ifdef GL_EXT_shader_framebuffer_fetch
+#define gl_LastFragColorARM finalColor
+inout vec4 finalColor;
+#else
+out vec4 finalColor;
+#endif
 
 in highp vec4 color;
 in highp vec3 position;
 in highp vec3 origin;
+flat in float ditherFactor;
 
 const float Kc = 1.0;
 const float Kl = 0.14;
@@ -16,10 +22,10 @@ const float Kq = 0.07;
 
 const float specShine = 10.0;
 const float specIntensity= 0.1;
-const float fogIntensity = 0.05;
+const float fogIntensity = 0.04;
 
 
-const float ditherSpread = 5.0/255.0;
+const float ditherSpread = 20.0/255.0;
 
 const int bayer8[64] = int[64](
  0, 32,  8, 40,  2, 34, 10, 42,
@@ -37,7 +43,7 @@ float calcFogLight(float fragDist, vec3 dir) {
 	float d = dot(dir, origin.xyz);
 	vec3 orthLvec = origin.xyz - dir * d;
 	
-	float h = length(orthLvec);
+	float h = length(orthLvec)+1.0;
 	float oL = length(origin.xyz - orthLvec)*sign(d);
 
 	return (atan((fragDist-oL)/h) - atan(-oL/h))/h;
@@ -45,11 +51,21 @@ float calcFogLight(float fragDist, vec3 dir) {
 
 void main()
 {
+	#ifndef VOLUMETRIC_FOG
+	float depth = gl_LastFragDepthARM;
+	if (depth == 1.0) {
+		discard;
+	}
+	#endif
+	
 	float i = mod(gl_FragCoord.x-0.5, 2.0);
 	
-	vec3 albedo = -dFdx((1.0-i)*gl_FragColor.rgb);
-	
+	#ifdef VOLUMETRIC_FOG
 	float viewZ = PROJ[3][2] / ((gl_LastFragDepthARM * 2.0 - 1.0) + PROJ[2][2]);
+	#else
+	float viewZ = PROJ[3][2] / ((depth * 2.0 - 1.0) + PROJ[2][2]);
+	#endif
+	
 	vec3 viewPos = viewZ * position / position.z;
 	
 	vec3 L = origin - viewPos;
@@ -66,13 +82,15 @@ void main()
 	float specular = specIntensity*pow(max(dot(N, h), 0.0), specShine);
 	float diffuse = dot(N, L);
 	float attenuation = 1.0 / (Kc + Kl * dist + Kq * dist*dist);
+
+	float dither = ditherSpread * ditherFactor * ((float(bayer8[int(0.5*round(gl_FragCoord.x-0.5))%8+8*(int(0.5*round(gl_FragCoord.y-0.5))%8)]+1))/64.0-0.5);
 	
-	float dither = ditherSpread*((float(bayer8[int(0.5*round(gl_FragCoord.x-0.5))%8+8*(int(0.5*round(gl_FragCoord.y-0.5))%8)]+1))/64.0-0.5);
+	vec3 albedo = -dFdx((1.0-i)*gl_LastFragColorARM.rgb);
 	
 #ifdef VOLUMETRIC_FOG
 	float fog = fogIntensity*calcFogLight(viewLen, normalize(position.xyz));
-	gl_FragColor = i*vec4((attenuation * step(0.0, diffuse) * (specular + diffuse*albedo) + fog) * 16.0*color.rgb + dither, 1.0);
+	finalColor = i*vec4((attenuation * step(0.0, diffuse) * (specular + diffuse*albedo) + fog) * 16.0*color.rgb + dither, 1.0);
 #else
-	gl_FragColor = i*vec4((attenuation * step(0.0, diffuse) * (specular + diffuse*albedo)) * 16.0*color.rgb + dither, 1.0);
+	finalColor = i*vec4((attenuation * step(0.0, diffuse) * (specular + diffuse*albedo)) * 16.0*color.rgb + dither, 1.0);
 #endif
 }
