@@ -1,7 +1,7 @@
 {
 	"format_version": 2,
 	"header": {
-		"name": "Deferred Lighting Shader RP",
+		"name": "Deferred Lighting Shader RP v1.0.1",
 		"description": "§l§6Experimental toggles:§r§o§3\n- Holiday Creator Features\n- Upcoming Creator Features\n- GameTest Framework\n- Molang Features",
 		"uuid": "93fde93e-875b-473c-a850-6481bd014bca",
 		"version": [1, 0, 1],
