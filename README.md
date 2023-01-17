@@ -36,8 +36,30 @@ The following conditions has to be met in order to use this add-on
 	- `deferred:despawn` event has to be used to remove light sources, since they're invulnerable otherwise (even to `/kill`)
 	- `deferred:random_color` event randomizes color
 	- `deferred:switch_fog` event toggles fog On and Off
-##  Screenshots
+- #### HDR
+	- Exposure can be adjusted by looking directly down and rotating the camera clockwise and counterclockwise
+	- Looking directly up resets the exposure to 100%
+	- Exposure ranges from 10% to 100%
+	- During adjustment, exposure percentage indicator is visible
+## New HDR Screenshots
 > Hover over a screenshot to see which map was used, click on it to get to the download page
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/286649185468678144/1047808803787259964/Screenshot_20221201-103239.png "Vanilla screenshot")
+
+[![Le Ultimate RTX (Java map)](https://cdn.discordapp.com/attachments/286649185468678144/1064585222382960731/Screenshot_20230116-173810.png "Le Ultimate RTX (Java map)")](https://www.mediafire.com/file/of1821ywjctxzyh/le_ultimate_rtx14.zip/file "Le Ultimate RTX (Java map)")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1053407853194522784/Screenshot_20221216-212409.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1052766900523905074/Screenshot_20221215-013211.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1064878304995332116/Screenshot_20230117-130355.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1052589068875202622/Screenshot_20221208-023141.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/286649185468678144/1055939267240656896/Screenshot_20221223-175756.png "Vanilla screenshot")
+
+
+##  Old Screenshots
 
 [![Minecraft RTX (Gamescom 2019) Map recreation](https://cdn.discordapp.com/attachments/286649185468678144/1030978698444279818/Screenshot_20221016-005412.png "Minecraft RTX (Gamescom 2019) Map recreation")](https://www.planetminecraft.com/project/minecraft-rtx-gamescom-2019-map "Minecraft RTX (Gamescom 2019) Map recreation")
 

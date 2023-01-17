@@ -1,0 +1,17 @@
+{
+	"namespace": "pause",
+	"skin_viewer_panel": {
+		"modifications": [
+			{
+				"array_name": "controls",
+				"operation": "remove",
+				"control_name": "paper_doll_panel"
+			},
+			{
+				"array_name": "controls",
+				"operation": "remove",
+				"control_name": "paper_doll_name_tag"
+			}
+		]
+	}
+}

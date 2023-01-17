@@ -1,7 +1,32 @@
-// __multiversion__
-// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+#include "fragmentHeader.h"
+
 precision highp float;
 #include "fragmentVersionCentroid.h"
+#include "quadSwizzle.glsl"
+
+#ifdef BLEND
+
+#ifdef GL_EXT_shader_framebuffer_fetch
+#define gl_LastFragColorARM finalColor
+inout vec4 finalColor;
+#else
+out vec4 finalColor;
+#endif
+
+#endif // BLEND
+
+const float ditherSpread = 10.0/255.0;
+
+const float bayer8[64] = float[64](
+-0.9688, 0.0312, -0.7188, 0.2812, -0.9062, 0.0938, -0.6562, 0.3438,
+0.5312, -0.4688, 0.7812, -0.2188, 0.5938, -0.4062, 0.8438, -0.1562,
+-0.5938, 0.4062, -0.8438, 0.1562, -0.5312, 0.4688, -0.7812, 0.2188,
+0.9062, -0.0938, 0.6562, -0.3438, 0.9688, -0.0312, 0.7188, -0.2812,
+-0.875, 0.125, -0.625, 0.375, -0.9375, 0.0625, -0.6875, 0.3125,
+0.625, -0.375, 0.875, -0.125, 0.5625, -0.4375, 0.8125, -0.1875,
+-0.5, 0.5, -0.75, 0.25, -0.5625, 0.4375, -0.8125, 0.1875,
+1.0, 0.0, 0.75, -0.25, 0.9375, -0.0625, 0.6875, -0.3125
+);
 
 #if __VERSION__ >= 300
 	#ifndef BYPASS_PIXEL_SHADER
@@ -87,12 +112,45 @@ vec4 inColor = color;
 	diffuse.rgb *= inColor.aaa;
 	diffuse.a = 1.0;
 #endif
+	
+	vec3 swizzlePos = quadSwizzlePos();
+	
+	int index = quadSwizzleIndex(swizzlePos);
+	
+	vec4 col = quadSwizzle0(L*diffuse, swizzlePos.x);
 
+#ifdef BLEND
+	vec3 prevCol = gl_LastFragColorARM.rgb;
+	vec3 col0 = quadSwizzle0(prevCol, swizzlePos.x);
+	vec3 col1 = quadSwizzle1(prevCol, swizzlePos.x);
+	vec3 col2 = quadSwizzle2(prevCol, swizzlePos.yz);
+	
+	vec3 lighting = mix(2.0*vec3(col0.g, col1.g, col2.g) + 2.0*round(31.0*vec3(col0.r, col1.r, col2.r)/2.0), col.rgb, col.a);
+	
 #ifdef FOG
-	diffuse.rgb = mix( diffuse.rgb, fogColor.rgb, fogColor.a );
+	lighting.rgb = mix( lighting.rgb, fogColor.rgb, fogColor.a );
 #endif
 	
-	gl_FragColor = mix(diffuse, L*diffuse, mod(gl_FragCoord.x-0.5, 2.0));
+	vec3 hdrCol1 = mod(31.0*lighting, 64.0)/63.0;
+	vec3 hdrCol2 = 2.0*floor(31.0*lighting/64.0)/31.0;
 	
+	finalColor = index == 0 ? vec4(hdrCol2.r, hdrCol1.r, col0.b, 1.0) : index == 1 ? vec4(hdrCol2.g, hdrCol1.g, col1.b, 1.0) : vec4(hdrCol2.b, hdrCol1.b, col2.b, 1.0);
+#else // BLEND
+	
+	float dither = ditherSpread * bayer8[int(0.5*gl_FragCoord.y)%8 + 8*(int(0.5*gl_FragCoord.x)%8)];
+	
+	diffuse = 15.0*quadSwizzle0(min(diffuse+dither, 1.0), swizzlePos.x)/31.0;
+
+#ifdef FOG
+	col.rgb = 0.5*mix( col.rgb, fogColor.rgb, fogColor.a )-dither;
+#else
+	col.rgb *= 0.5;
+	col.rgb -= dither;
+#endif
+	
+	gl_FragColor = index == 0 ? vec4(0.0, col.r, diffuse.r, 1.0) : index == 1 ? vec4(0.0, col.g, diffuse.g, 1.0) : vec4(0.0, col.b, diffuse.b, 1.0);
+
+#endif // BLEND
+
 #endif // BYPASS_PIXEL_SHADER
 }

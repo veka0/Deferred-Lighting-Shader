@@ -7,6 +7,12 @@
 			"+states": [ "Blending" ],
 			"msaaSupport": "NonMSAA"
 		},
+		"entity_alphatest_ui:entity_alphatest": {
+			"+defines": [ "IN_UI" ]
+		},
+		"player_animated_ui:player_animated": {
+			"+defines": [ "IN_UI" ]
+		},
 		"entity_static": {
 			"vertexShader": "shaders/entity.vertex",
 			"vrGeometryShader": "shaders/entity.geometry",

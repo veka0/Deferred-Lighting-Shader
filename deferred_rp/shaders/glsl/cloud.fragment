@@ -1,0 +1,41 @@
+#include "fragmentHeader.h"
+#include "quadSwizzle.glsl"
+
+#ifdef GL_EXT_shader_framebuffer_fetch
+#define gl_LastFragColorARM finalColor
+inout vec4 finalColor;
+#else
+out vec4 finalColor;
+#endif
+
+in vec4 color;
+
+void main()
+{
+	vec3 swizzlePos = quadSwizzlePos();
+	
+	int index = quadSwizzleIndex(swizzlePos);
+
+#ifdef BLEND
+	if (color.a <= 0.0) { discard; }
+	
+	vec3 prevCol = gl_LastFragColorARM.rgb;
+	vec3 col0 = quadSwizzle0(prevCol, swizzlePos.x);
+	vec3 col1 = quadSwizzle1(prevCol, swizzlePos.x);
+	vec3 col2 = quadSwizzle2(prevCol, swizzlePos.yz);
+	
+	vec3 lighting = quadSwizzle0(mix(2.0*vec3(col0.g, col1.g, col2.g) + 2.0*round(31.0*vec3(col0.r, col1.r, col2.r)/2.0), color.rgb, max(0.0, color.a)), swizzlePos.x);
+	
+	vec3 hdrCol1 = mod(31.0*lighting, 64.0)/63.0;
+	vec3 hdrCol2 = 2.0*floor(31.0*lighting/64.0)/31.0;
+	
+	finalColor = index == 0 ? vec4(hdrCol2.r, hdrCol1.r, 0.0, 1.0) : index == 1 ? vec4(hdrCol2.g, hdrCol1.g, 0.0, 1.0) : vec4(hdrCol2.b, hdrCol1.b, 0.0, 1.0);
+#else // BLEND
+
+	vec3 diffuse = 15.0*quadSwizzle0(color.rgb, swizzlePos.x)/31.0;
+	
+	vec3 col = color.rgb*0.5;
+	
+	finalColor = index == 0 ? vec4(0.0, col.r, diffuse.r, 1.0) : index == 1 ? vec4(0.0, col.g, diffuse.g, 1.0) : vec4(0.0, col.b, diffuse.b, 1.0);
+#endif // BLEND
+}

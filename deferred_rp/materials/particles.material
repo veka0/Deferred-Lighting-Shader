@@ -1,7 +1,27 @@
 {
 	"materials": {
 		"version": "1.0.0",
+		"particles_base": {
+			"+defines": ["PARTICLE"],
+			"vertexShader": "shaders/color_uv.vertex",
+			"vrGeometryShader": "shaders/color_uv.geometry",
+			"fragmentShader": "shaders/color_texture.fragment",
 
+			"vertexFields": [
+				{ "field": "Position" },
+				{ "field": "Color" },
+				{ "field": "UV0" }
+			],
+
+			"+samplerStates": [
+				{
+					"samplerIndex": 0,
+					"textureFilter": "Point"
+				}
+			],
+
+			"msaaSupport": "NonMSAA"
+		},
 		"particles_light": {
 			"vertexShader": "shaders/point_light.vertex",
 			"vrGeometryShader": "shaders/color_uv.geometry",
@@ -53,13 +73,59 @@
 				}
 			],
 			"msaaSupport": "NonMSAA",
-			"blendSrc": "One",
-			"blendDst": "One",
-			"+states": [ "Blending", "DisableDepthWrite", "DisableDepthTest" ]
+			"+states": [ "StencilWrite", "DisableDepthWrite", "DisableDepthTest", "EnableStencilTest" ],
+			
+			"frontFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Keep"
+			},
+		
+			"stencilRef": 2,
+			"stencilWriteMask": 2
 		},
 		
 		"particles_light_fog:particles_light": {
 			"+defines": [ "VOLUMETRIC_FOG" ]
+		},
+		
+		"particles_sky_fix": {
+			"vertexShader": "shaders/sky_fix.vertex",
+			"vrGeometryShader": "shaders/color_uv.geometry",
+			"fragmentShader": "shaders/sky_fix.fragment",
+
+			"vertexFields": [
+				{ "field": "Position" },
+				{ "field": "Color" },
+				{ "field": "UV0" }
+			],
+
+			"+samplerStates": [
+				{
+					"samplerIndex": 0,
+					"textureFilter": "Point"
+				}
+			],
+			"msaaSupport": "NonMSAA",
+			"+states": [ "DisableDepthWrite", "StencilWrite", "EnableStencilTest" ],
+			
+			"frontFace": {
+				"stencilFunc": "NotEqual",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "NotEqual",
+				"stencilPassOp": "Replace"
+			},
+		
+			"stencilRef": 2,
+			"stencilReadMask": 2,
+			"stencilWriteMask": 2
 		}
 	}
 }

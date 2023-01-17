@@ -1,0 +1,73 @@
+{
+	"format_version": "1.8.0",
+	"render_controllers": {
+		"controller.render.player.third_person": {
+			"geometry": "Geometry.default",
+			"materials": [ { "*": "v.is_paperdoll || q.is_in_ui ? Material.ui : Material.default" } ],
+			"textures": [ "Texture.default" ],
+			"part_visibility": [
+				{ "*": true },
+				{ "helmet": "variable.helmet_layer_visible" },
+				{ "leftLegging": "variable.leg_layer_visible" },
+				{ "rightLegging": "variable.leg_layer_visible" },
+				{ "leftBoot": "variable.boot_layer_visible" },
+				{ "rightBoot": "variable.boot_layer_visible" },
+				{ "leftSock": "variable.boot_layer_visible && variable.leg_layer_visible" },
+				{ "rightSock": "variable.boot_layer_visible && variable.leg_layer_visible" },
+				{ "bodyArmor": "variable.chest_layer_visible && !query.has_cape" },
+				{ "leftArmArmor": "variable.chest_layer_visible && !query.has_cape" },
+				{ "rightArmArmor": "variable.chest_layer_visible && !query.has_cape" },
+				{ "belt": "variable.chest_layer_visible && variable.leg_layer_visible" }
+			]
+		},
+		
+		"controller.render.deferred.final_pass": {
+			"geometry": "Geometry.final_pass_quad",
+			"materials": [ { "*": "Material.final_pass" } ],
+			"textures": [
+				"Texture.default"
+			],
+			"ignore_lighting": true,
+			"uv_anim": {"offset": ["v.exposure", 0], "scale": [1,1]}
+		},
+		
+		"controller.render.deferred.digit1": {
+			"geometry": "Geometry.digit1",
+			"materials": [ { "*": "Material.animated_ui" } ],
+			"textures": [
+				"Texture.digits"
+			],
+			"ignore_lighting": true,
+			"uv_anim": {"offset": [0, "7*math.floor(v.exposure)/77"], "scale": [1,1]}
+		},
+		
+		"controller.render.deferred.digit2": {
+			"geometry": "Geometry.digit2",
+			"materials": [ { "*": "Material.animated_ui" } ],
+			"textures": [
+				"Texture.digits"
+			],
+			"ignore_lighting": true,
+			"uv_anim": {"offset": [0, "7*math.mod(math.floor(10*v.exposure), 10)/77"], "scale": [1,1]}
+		},
+		
+		"controller.render.deferred.digit3": {
+			"geometry": "Geometry.digit3",
+			"materials": [ { "*": "Material.animated_ui" } ],
+			"textures": [
+				"Texture.digits"
+			],
+			"ignore_lighting": true,
+			"uv_anim": {"offset": [0, "7*math.mod(math.floor(100*v.exposure), 10)/77"], "scale": [1,1]}
+		},
+		
+		"controller.render.deferred.percent": {
+			"geometry": "Geometry.percent",
+			"materials": [ { "*": "Material.animated_ui" } ],
+			"textures": [
+				"Texture.digits"
+			],
+			"ignore_lighting": true
+		}
+	}
+}

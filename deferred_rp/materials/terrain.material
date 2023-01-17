@@ -8,8 +8,8 @@
 			"fragmentShader": "shaders/renderchunk.fragment",
 
 			"+defines": [ "LOW_PRECISION", "TEXEL_AA", "ATLAS_TEXTURE" ],
-			"+states": [ "DisableAlphaWrite" ],
-
+			"+states": [ "DisableAlphaWrite", "EnableStencilTest", "StencilWrite"  ],
+			
 			"+samplerStates": [
 				{
 					"samplerIndex": 0,
@@ -43,7 +43,43 @@
 				{ "underwater": { "+defines": [ "FOG" ] } },
 				{ "fog.underwater": {} },
 				{ "fading": { "+defines": [ "FOG", "ALLOW_FADE" ] } }
+			],
+			
+			"frontFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"stencilRef": 0,
+			"stencilWriteMask": 4
+		},
+		
+		"terrain_blend:terrain_base": {
+			"+defines": [ "BLEND" ],
+			"-states": [ "EnableStencilTest", "StencilWrite" ],
+			"depthFunc": "LessEqual",
+			"+variants": [
+				{ "underwater": { } },
+				{ "fog.underwater": { } }
 			]
+		},
+		
+		"terrain_alpha:terrain_alpha_single_side": {
+			"+states": [ "DisableCulling" ],
+
+			// z-fighting fix
+			"depthBias": 0.0,
+			"slopeScaledDepthBias": 0.1,
+			"depthBiasOGL": 0.0,
+			"slopeScaledDepthBiasOGL": 0.5,
+		
+			// Enable subsurface scattering.
+			"stencilRef": 4
 		}
 	}
 }

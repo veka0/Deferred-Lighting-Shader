@@ -1,0 +1,76 @@
+// __multiversion__
+// This signals the loading code to prepend either #version 100 or #version 300 es as apropriate.
+
+#include "fragmentVersionCentroid.h"
+#include "uniformShaderConstants.h"
+#include "quadSwizzle.glsl"
+
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+
+const float bayer4[16] = float[16](
+-1.0, 0.0667, -0.7333, 0.3333,
+0.6, -0.4667, 0.8667, -0.2,
+-0.6, 0.4667, -0.8667, 0.2,
+1.0, -0.0667, 0.7333, -0.3333
+);
+
+const float ditherSpread = 10.0/255.0;
+
+#if __VERSION__ >= 300
+_centroid varying vec4 uv;
+#else
+varying vec4 uv;
+#endif
+
+#ifdef ENABLE_FOG
+varying vec4 fogColor;
+#endif
+
+#ifdef ENABLE_LIGHT
+varying vec4 light;
+#endif
+
+#ifndef DISABLE_TINTING
+varying vec4 color;
+#endif
+
+void main()
+{
+	vec4 diffuse = texture2D(TEXTURE_0, uv.xy);
+	vec4 base = texture2D(TEXTURE_0, uv.zw);
+
+#ifndef DISABLE_TINTING
+	base.a = mix(diffuse.r * diffuse.a, diffuse.a, color.a);
+	base.rgb *= color.rgb;
+#endif
+
+#ifdef ENABLE_LIGHT
+	vec3 col = base.rgb * light.rgb;
+#else
+	vec3 col = base.rgb;
+#endif
+
+#ifdef UI_ENTITY
+	base.a *= HUD_OPACITY;
+#endif
+	
+#ifdef ENABLE_FOG
+	//apply fog
+	col.rgb = mix( col.rgb, fogColor.rgb, fogColor.a );
+#endif
+
+#ifdef UI_ENTITY
+	gl_FragColor = vec4(col, base.a);
+#else
+	vec3 swizzlePos = quadSwizzlePos();
+	
+	int index = quadSwizzleIndex(swizzlePos);
+	
+	float dither = ditherSpread * bayer4[int(0.5*gl_FragCoord.y)%4 + 4*(int(0.5*gl_FragCoord.x)%4)];
+	col.rgb = 0.5*col+dither;
+	base.rgb = 15.0*base.rgb/31.0+dither;
+	
+	
+	gl_FragColor = index == 0 ? vec4(0.0, col.r, base.r, base.a) : index == 1 ? vec4(0.0, col.g, base.g, base.a) : vec4(0.0, col.b, base.b, base.a);
+#endif
+}

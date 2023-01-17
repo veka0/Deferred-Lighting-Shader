@@ -13,10 +13,10 @@
 				"position": true
 			},
 			"minecraft:emitter_initialization": {
-				"creation_expression": "v.Kc = 1; v.Kl = 0.14; v.Kq = 0.07; v.r = 0; v.g = 0; v.b = 0; v.scale = 0;"
+				"creation_expression": "v.r = 0; v.g = 0; v.b = 0; v.scale = 0;"
 			},
 			"minecraft:particle_initialization": {
-				"per_render_expression": "v.r = q.actor_property('deferred:color_r')/255; v.g = q.actor_property('deferred:color_g')/255; v.b = q.actor_property('deferred:color_b')/255; v.scale = math.min(64, (-v.Kl + math.sqrt(v.Kl*v.Kl - 4*v.Kq*(v.Kc - math.max(v.r, math.max(v.g, v.b)) * 256/25)))/(2*v.Kq));"
+				"per_render_expression": "v.r = q.actor_property('deferred:color_r')/255; v.g = q.actor_property('deferred:color_g')/255; v.b = q.actor_property('deferred:color_b')/255; v.scale = math.min(32, math.sqrt(255*math.max(v.r, math.max(v.g, v.b))/5));"
 			},
 			"minecraft:particle_motion_parametric": {
 				"relative_position": ["-v.scale", 0, 0]
@@ -45,7 +45,7 @@
 				}
 			},
 			"minecraft:particle_appearance_tinting": {
-				"color": [ "v.r/16", "v.g/16", "v.b/16", "v.scale/64" ]
+				"color": [ "v.r/16", "v.g/16", "v.b/16", "v.scale/32" ]
 			}
 		}
 	}

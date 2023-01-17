@@ -1,6 +1,9 @@
 #include "fragmentHeader.h"
-
 precision highp float;
+
+#include "quadSwizzle.glsl"
+#include "uniformEntityConstants.h"
+#include "ACES.glsl"
 
 #ifdef GL_EXT_shader_framebuffer_fetch
 #define gl_LastFragColorARM finalColor
@@ -9,7 +12,18 @@ inout vec4 finalColor;
 out vec4 finalColor;
 #endif
 
+
 void main()
 {
-	finalColor = vec4(dFdx(mod(gl_FragCoord.x-0.5, 2.0)*gl_LastFragColorARM.rgb), 1.0);
+	vec3 swizzlePos = quadSwizzlePos();
+	
+	vec3 col = gl_LastFragColorARM.rgb;
+	
+	vec3 col0 = quadSwizzle0(col, swizzlePos.x);
+	vec3 col1 = quadSwizzle1(col, swizzlePos.x);
+	vec3 col2 = quadSwizzle2(col, swizzlePos.yz);
+	
+	vec3 lighting = 2.0*vec3(col0.g, col1.g, col2.g) + 2.0*round(31.0*vec3(col0.r, col1.r, col2.r)/2.0);
+	
+	finalColor = vec4(ACESFitted(UV_ANIM.x*1.5*lighting), 1.0);
 }

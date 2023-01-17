@@ -1,0 +1,39 @@
+{
+	"materials": {
+		"version": "1.0.0",
+
+		"shadow_overlay": {
+			"+states": [
+				"DisableDepthTest",
+				"DisableCulling",
+				"EnableStencilTest"
+			],
+
+			"vertexShader": "shaders/shadow_stencil_overlay.vertex",
+			"vrGeometryShader": "shaders/color.geometry",
+			"fragmentShader": "shaders/shadow_stencil_overlay.fragment",
+
+
+			"frontFace": {
+				"stencilFunc": "Equal",
+				"stencilPass": "Replace"
+			},
+
+			"backFace": {
+				"stencilFunc": "Equal",
+				"stencilPass": "Replace"
+			},
+
+			"stencilRef": 1,
+			"stencilReadMask": 1,
+			"stencilWriteMask": 0,
+
+			"vertexFields": [
+				{ "field": "Position" },
+				{ "field": "Color" }
+			],
+			"msaaSupport": "NonMSAA"
+
+		}
+	}
+}

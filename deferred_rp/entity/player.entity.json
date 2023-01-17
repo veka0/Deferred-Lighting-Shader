@@ -5,18 +5,28 @@
 			"identifier": "minecraft:player",
 			"materials": {
 				"default": "entity_alphatest",
+				"ui": "entity_alphatest_ui",
 				"cape": "entity_alphatest",
 				"animated": "player_animated",
+				"animated_ui": "player_animated_ui",
 				"final_pass": "final_deferred_pass"
 			},
 			"textures": {
 				"default": "textures/entity/steve",
-				"cape": "textures/entity/cape_invisible"
+				"cape": "textures/entity/cape_invisible",
+				"digits": "textures/entity/digits"
 			},
 			"geometry": {
 				"default": "geometry.humanoid.custom",
 				"cape": "geometry.cape",
-				"final_pass_quad": "geometry.final_pass_quad"
+				"final_pass_quad": "geometry.final_pass_quad",
+				"digit1": "geometry.digit1",
+				"digit2": "geometry.digit2",
+				"digit3": "geometry.digit3",
+				"percent": "geometry.percent"
+			},
+			"particle_effects": {
+				"sky_fix": "deferred:sky_fix"
 			},
 			"scripts": {
 				"scale": "0.9375",
@@ -24,7 +34,11 @@
 					"variable.is_holding_right = 0.0;",
 					"variable.is_blinking = 0.0;",
 					"variable.last_blink_time = 0.0;",
-					"variable.hand_bob = 0.0;"
+					"variable.hand_bob = 0.0;",
+					"variable.exposure = 1.0;",
+					"v.prev_rot = 0;",
+					"v.emitted = 0;",
+					"v.exposure_timestamp = 0;"
 				],
 				"pre_animation": [
 					"variable.helmet_layer_visible = 1.0;",
@@ -37,10 +51,17 @@
 					"variable.hand_bob = query.life_time < 0.01 ? 0.0 : variable.hand_bob + ((query.is_on_ground && query.is_alive ? math.clamp(math.sqrt(math.pow(query.position_delta(0), 2.0) + math.pow(query.position_delta(2), 2.0)), 0.0, 0.1) : 0.0) - variable.hand_bob) * 0.02;",
 
 					"variable.map_angle = math.clamp(1 - variable.player_x_rotation / 45.1, 0.0, 1.0);",
-					"variable.item_use_normalized = query.main_hand_item_use_duration / query.main_hand_item_max_duration;"
+					"variable.item_use_normalized = query.main_hand_item_use_duration / query.main_hand_item_max_duration;",
+					
+					// Deferred Lighting Shader.
+					"q.camera_rotation(0) < -89 ? {v.exposure_timestamp = q.life_time; v.exposure = 1;};",
+					"q.camera_rotation(0) > 89 ? {v.exposure_timestamp = q.life_time; v.exposure = math.clamp(v.exposure + math.min_angle(q.camera_rotation(1)-v.prev_rot)/360, 0.1, 1);};",
+					"v.prev_rot = q.camera_rotation(1);",
+					"v.exposure_timestamp = math.min(v.exposure_timestamp, q.life_time);"
 				],
 				"animate": [
-					"root"
+					"root",
+					"sky_fix"
 				]
 			},
 			"animations": {
@@ -95,13 +116,18 @@
 				"crossbow_controller": "controller.animation.player.crossbow",
 				"shield_block_main_hand": "animation.player.shield_block_main_hand",
 				"shield_block_off_hand": "animation.player.shield_block_off_hand",
-				"blink": "controller.animation.persona.blink"
+				"blink": "controller.animation.persona.blink",
+				"sky_fix": "controller.animation.deferred.sky_fix"
 			},
 			"render_controllers": [
 				{ "controller.render.player.first_person": "variable.is_first_person" },
-				{ "controller.render.player.third_person": "!variable.is_first_person && !variable.map_face_icon" },
+				{ "controller.render.player.third_person": "!variable.is_first_person && !variable.map_face_icon && !v.is_paperdoll" },
 				{ "controller.render.player.map": "variable.map_face_icon" },
-				{ "controller.render.deferred.final_pass": "v.is_paperdoll && !q.is_in_ui" }
+				{ "controller.render.deferred.final_pass": "v.is_paperdoll && !q.is_in_ui" },
+				{ "controller.render.deferred.digit1": "v.is_paperdoll && !q.is_in_ui && v.exposure >= 1 && q.life_time-v.exposure_timestamp < 1" },
+				{ "controller.render.deferred.digit2": "v.is_paperdoll && !q.is_in_ui && v.exposure >= 0.1 && q.life_time-v.exposure_timestamp < 1" },
+				{ "controller.render.deferred.digit3": "v.is_paperdoll && !q.is_in_ui && q.life_time-v.exposure_timestamp < 1" },
+				{ "controller.render.deferred.percent": "v.is_paperdoll && !q.is_in_ui && q.life_time-v.exposure_timestamp < 1" }
 			],
 			"enable_attachables": true
 		}

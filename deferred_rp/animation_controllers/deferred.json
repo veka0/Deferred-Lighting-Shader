@@ -30,6 +30,20 @@
 					]
 				}
 			}
+		},
+		
+		"controller.animation.deferred.sky_fix": {
+			"states": {
+				"default": {
+					"particle_effects": [
+						{"effect": "sky_fix"}
+					],
+					"transitions": [{ "dummy": "1" }]
+				},
+				"dummy": {
+					"transitions": [{ "default": "1" }]
+				}
+			}
 		}
 	}
 }
