@@ -15,7 +15,7 @@ precision highp float;
 	out vec4 finalColor;
 #endif
 
-layout(binding=0) uniform sampler2D TEXTURE_0;
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
 
 // Settings
 const float fogIntensity = 0.02;

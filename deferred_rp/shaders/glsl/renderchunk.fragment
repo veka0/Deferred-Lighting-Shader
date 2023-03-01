@@ -1,7 +1,23 @@
 #include "fragmentHeader.h"
 
 precision highp float;
-#include "fragmentVersionCentroid.h"
+
+
+// fragmentVersionCentroid.h
+
+#ifdef MSAA_FRAMEBUFFER_ENABLED
+#define _centroid centroid
+#else
+#define _centroid
+#endif
+
+// version 300 code
+_centroid in vec2 uv;
+
+#define varying in
+#define texture2D texture
+
+
 #include "quadSwizzle.glsl"
 
 #ifdef BLEND
@@ -12,6 +28,10 @@ inout vec4 finalColor;
 #else
 out vec4 finalColor;
 #endif
+
+#else
+
+out vec4 finalColor;
 
 #endif // BLEND
 
@@ -64,7 +84,7 @@ void main()
 {
 	
 #ifdef BYPASS_PIXEL_SHADER
-	gl_FragColor = vec4(0, 0, 0, 0);
+	finalColor = vec4(0, 0, 0, 0);
 	return;
 #else 
 
@@ -148,7 +168,7 @@ vec4 inColor = color;
 	col.rgb -= dither;
 #endif
 	
-	gl_FragColor = index == 0 ? vec4(0.0, col.r, diffuse.r, 1.0) : index == 1 ? vec4(0.0, col.g, diffuse.g, 1.0) : vec4(0.0, col.b, diffuse.b, 1.0);
+	finalColor = index == 0 ? vec4(0.0, col.r, diffuse.r, 1.0) : index == 1 ? vec4(0.0, col.g, diffuse.g, 1.0) : vec4(0.0, col.b, diffuse.b, 1.0);
 
 #endif // BLEND
 

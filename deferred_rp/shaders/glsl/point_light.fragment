@@ -15,7 +15,7 @@ precision highp float;
 
 #line 16
 
-layout(binding=0) uniform sampler2D TEXTURE_0;
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
 
 // Settings
 const float specShine = 10.0;
