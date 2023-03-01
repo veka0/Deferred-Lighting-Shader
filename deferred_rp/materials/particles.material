@@ -23,7 +23,7 @@
 			"msaaSupport": "NonMSAA"
 		},
 		"particles_light": {
-			"vertexShader": "shaders/point_light.vertex",
+			"vertexShader": "shaders/point_light_particle.vertex",
 			"vrGeometryShader": "shaders/color_uv.geometry",
 			"fragmentShader": "shaders/point_light.fragment",
 
@@ -69,7 +69,8 @@
 			"+samplerStates": [
 				{
 					"samplerIndex": 0,
-					"textureFilter": "Point"
+					"textureFilter": "Point",
+					"textureWrap": "Repeat"
 				}
 			],
 			"msaaSupport": "NonMSAA",
@@ -91,6 +92,10 @@
 		
 		"particles_light_fog:particles_light": {
 			"+defines": [ "VOLUMETRIC_FOG" ]
+		},
+		
+		"particles_light_only_fog:particles_light": {
+			"fragmentShader": "shaders/point_light_fog.fragment"
 		},
 		
 		"particles_sky_fix": {

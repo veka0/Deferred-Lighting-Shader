@@ -15,7 +15,7 @@ out vec4 finalColor;
 
 #endif // BLEND
 
-const float ditherSpread = 10.0/255.0;
+const float ditherSpread = 2.0/255.0;
 
 const float bayer8[64] = float[64](
 -0.9688, 0.0312, -0.7188, 0.2812, -0.9062, 0.0938, -0.6562, 0.3438,
@@ -68,10 +68,12 @@ void main()
 	return;
 #else 
 
+	vec3 swizzlePos = quadSwizzlePos();
+
 #if USE_TEXEL_AA
-	highp vec4 diffuse = texture2D_AA(TEXTURE_0, uv0);
+	highp vec4 diffuse = quadSwizzle0(texture2D_AA(TEXTURE_0, uv0), swizzlePos.x);
 #else
-	highp vec4 diffuse = texture2D(TEXTURE_0, uv0);
+	highp vec4 diffuse = quadSwizzle0(texture2D(TEXTURE_0, uv0), swizzlePos.x);
 #endif
 	
 #ifdef SEASONS_FAR
@@ -113,11 +115,9 @@ vec4 inColor = color;
 	diffuse.a = 1.0;
 #endif
 	
-	vec3 swizzlePos = quadSwizzlePos();
-	
 	int index = quadSwizzleIndex(swizzlePos);
 	
-	vec4 col = quadSwizzle0(L*diffuse, swizzlePos.x);
+	vec4 col = L*diffuse;
 
 #ifdef BLEND
 	vec3 prevCol = gl_LastFragColorARM.rgb;
@@ -139,7 +139,7 @@ vec4 inColor = color;
 	
 	float dither = ditherSpread * bayer8[int(0.5*gl_FragCoord.y)%8 + 8*(int(0.5*gl_FragCoord.x)%8)];
 	
-	diffuse = 15.0*quadSwizzle0(min(diffuse+dither, 1.0), swizzlePos.x)/31.0;
+	diffuse += dither;
 
 #ifdef FOG
 	col.rgb = 0.5*mix( col.rgb, fogColor.rgb, fogColor.a )-dither;

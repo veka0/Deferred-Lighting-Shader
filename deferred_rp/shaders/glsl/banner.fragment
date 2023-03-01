@@ -14,7 +14,7 @@ const float bayer4[16] = float[16](
 1.0, -0.0667, 0.7333, -0.3333
 );
 
-const float ditherSpread = 10.0/255.0;
+const float ditherSpread = 2.0/255.0;
 
 #if __VERSION__ >= 300
 _centroid varying vec4 uv;
@@ -68,7 +68,7 @@ void main()
 	
 	float dither = ditherSpread * bayer4[int(0.5*gl_FragCoord.y)%4 + 4*(int(0.5*gl_FragCoord.x)%4)];
 	col.rgb = 0.5*col+dither;
-	base.rgb = 15.0*base.rgb/31.0+dither;
+	base.rgb -= dither;
 	
 	
 	gl_FragColor = index == 0 ? vec4(0.0, col.r, base.r, base.a) : index == 1 ? vec4(0.0, col.g, base.g, base.a) : vec4(0.0, col.b, base.b, base.a);

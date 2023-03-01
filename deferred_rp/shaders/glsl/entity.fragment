@@ -19,7 +19,7 @@ LAYOUT_BINDING(1) uniform sampler2D TEXTURE_1;
 varying vec4 light;
 varying vec4 fogColor;
 
-const float ditherSpread = 10.0/255.0;
+const float ditherSpread = 2.0/255.0;
 
 const float bayer4[16] = float[16](
 -1.0, 0.0667, -0.7333, 0.3333,
@@ -205,7 +205,7 @@ testColor.a *= alphaTestMultiplier;
 	vec4 col = quadSwizzle0(L*color, swizzlePos.x);
 	//apply fog
 	col.rgb = 0.5*mix( col.rgb, fogColor.rgb, fogColor.a )+dither;
-	color = 15.0*quadSwizzle0(min(color, 1.0), swizzlePos.x)/31.0;
+	color = quadSwizzle0(color-dither, swizzlePos.x);
 	
 	gl_FragColor = index == 0 ? vec4(0.0, col.r, color.r, col.a) : index == 1 ? vec4(0.0, col.g, color.g, col.a) : vec4(0.0, col.b, color.b, col.a);
 #endif

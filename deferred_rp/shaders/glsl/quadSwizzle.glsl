@@ -9,9 +9,9 @@
 
 
 // Quad swizzle position
-// Is a value that's used for calculating swizzling
-// values, and it can be pre-computed and passes into
-// swizzling functions for better performance.
+// Is a vector that's useful in computation of swizzling
+// functions, and it can be pre-computed and passed into
+// functions for better performance.
 
 // How to compute swizzle quad position:
 // x = mod(gl_FragCoord.x - 0.5, 2.0)

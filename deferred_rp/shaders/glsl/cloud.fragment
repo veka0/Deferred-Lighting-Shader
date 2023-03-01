@@ -32,7 +32,7 @@ void main()
 	finalColor = index == 0 ? vec4(hdrCol2.r, hdrCol1.r, 0.0, 1.0) : index == 1 ? vec4(hdrCol2.g, hdrCol1.g, 0.0, 1.0) : vec4(hdrCol2.b, hdrCol1.b, 0.0, 1.0);
 #else // BLEND
 
-	vec3 diffuse = 15.0*quadSwizzle0(color.rgb, swizzlePos.x)/31.0;
+	vec3 diffuse = quadSwizzle0(color.rgb, swizzlePos.x);
 	
 	vec3 col = color.rgb*0.5;
 	

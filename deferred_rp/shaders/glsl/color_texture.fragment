@@ -121,8 +121,8 @@ void main()
 	col.rgb = mix(col.rgb, fogColor.rgb, fogColor.a);
 #endif
 	float dither = ditherSpread * bayer4[int(0.5*gl_FragCoord.y)%4 + 4*(int(0.5*gl_FragCoord.x)%4)];
-	diffuse = 15.0*diffuse/31.0 + dither;
-	col = 0.5*col+dither;
+	diffuse = diffuse + dither;
+	col = 0.5*col-dither;
 	
 	gl_FragColor = index == 0 ? vec4(0.0, col.r, diffuse.r, col.a) : index == 1 ? vec4(0.0, col.g, diffuse.g, col.a) : vec4(0.0, col.b, diffuse.b, col.a);
 	

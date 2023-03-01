@@ -10,6 +10,25 @@
 					"pre_effect_script": "v.r = q.actor_property('deferred:color_r'); v.g = q.actor_property('deferred:color_g'); v.b = q.actor_property('deferred:color_b'); t.max = math.max(v.r, math.max(v.g, v.b)); v.r = v.r/t.max; v.g = v.g/t.max; v.b = v.b/t.max;"
 				}
 			}
+		},
+		"animation.deferred.point_light.snap_shadow": {
+			"loop": true,
+			"bones": {
+				"point_light": {
+					"scale": "-math.min(32, math.sqrt(math.max(q.actor_property('deferred:color_r'), math.max(q.actor_property('deferred:color_g'), q.actor_property('deferred:color_b')))/5))",
+					"rotation": [0, "-q.body_y_rotation", 0]
+				},
+				"rotate": {
+					"rotation": [0, "-q.body_y_rotation", 0]
+				},
+				"offset": {
+					"position": [
+						"-16*math.mod(1+math.mod(q.position(0), 1), 1)",
+						"-16*math.mod(1+math.mod(q.position(1), 1), 1)",
+						"-16*math.mod(1+math.mod(-q.position(2), 1), 1)"
+					]
+				}
+			}
 		}
 	}
 }

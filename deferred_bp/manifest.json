@@ -1,10 +1,10 @@
 {
 	"format_version": 2,
 	"header": {
-		"name": "Deferred Lighting Shader BP v1.1.0",
+		"name": "Deferred Lighting Shader BP v1.2.0",
 		"description": "§l§6Experimental toggles:§r§o§3\n- Holiday Creator Features\n- Upcoming Creator Features\n- GameTest Framework\n- Molang Features",
 		"uuid": "e4aa8cbb-cfe9-4e81-ba61-964318ccd52f",
-		"version": [1, 1, 0],
+		"version": [1, 2, 0],
 		"min_engine_version": [1, 17, 10]
 	},
 	"modules": [
@@ -30,7 +30,7 @@
 		},
 		{
 			"uuid": "93fde93e-875b-473c-a850-6481bd014bca",
-			"version": [1, 1, 0]
+			"version": [1, 2, 0]
 		}
 	]
 }

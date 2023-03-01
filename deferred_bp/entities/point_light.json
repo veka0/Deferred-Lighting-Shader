@@ -35,6 +35,11 @@
 					"values": [true, false],
 					"default": true,
 					"client_sync": true
+				},
+				"deferred:shadow":{
+					"values": [true, false],
+					"default": false,
+					"client_sync": true
 				}
 			}
 		},
@@ -124,6 +129,33 @@
 					}
 				]
 			},
+			"deferred:switch_shadow": {
+				"sequence": [
+					{
+						"filters": { "test": "has_tag", "value": "deferred:shadow" },
+						
+						"run_command": {
+							"command": [
+								"tag @s remove deferred:shadow"
+							]
+						}
+					},
+					{
+						"filters": { "test": "has_tag", "operator": "not", "value": "deferred:shadow" },
+						
+						"run_command": {
+							"command": [
+								"tag @s add deferred:shadow"
+							]
+						}
+					},
+					{
+						"trigger": {
+							"event": "deferred:sync"
+						}
+					}
+				]
+			},
 			"deferred:sync": {
 				"sequence": [
 					{
@@ -143,6 +175,14 @@
 					{
 						"filters": { "test": "has_tag", "operator": "not", "value": "deferred:fog" },
 						"set_actor_property": { "deferred:fog": false }
+					},
+					{
+						"filters": { "test": "has_tag", "value": "deferred:shadow" },
+						"set_actor_property": { "deferred:shadow": true }
+					},
+					{
+						"filters": { "test": "has_tag", "operator": "not", "value": "deferred:shadow" },
+						"set_actor_property": { "deferred:shadow": false }
 					}
 				]
 			},

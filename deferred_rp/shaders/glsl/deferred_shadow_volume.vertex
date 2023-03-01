@@ -1,0 +1,139 @@
+#version 300 es
+precision highp float;
+
+#include "uniformWorldConstants.h"
+#ifdef USE_SKINNING
+#include "uniformAnimationConstants.h"
+#endif
+
+in mediump vec4 POSITION;
+in vec2 TEXCOORD_0;
+in vec4 NORMAL;
+#if defined(USE_SKINNING)
+#ifdef MCPE_PLATFORM_NX
+in uint BONEID_0;
+#else
+in float BONEID_0;
+#endif
+#endif
+
+flat out vec3 blockPosition;
+out vec3 viewPosition;
+flat out mat4 worldMat;
+
+void main()
+{
+	vec4 entitySpacePosition;
+	vec4 entitySpaceNormal;
+
+#ifdef USE_SKINNING
+	#if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+		entitySpacePosition = BONES[int(BONEID_0)] * POSITION;
+		entitySpaceNormal = BONES[int(BONEID_0)] * NORMAL;
+	#else
+		entitySpacePosition = BONE * POSITION;
+		entitySpaceNormal = BONE * NORMAL;
+	#endif
+#else
+	entitySpacePosition = POSITION * vec4(1, 1, 1, 1);
+	entitySpaceNormal = NORMAL * vec4(1, 1, 1, 0);
+#endif
+	
+	vec3 localPos = 0.0625 * POSITION.xyz + vec3(0.0, 1.5, 0.0);
+	localPos = vec3(1.0, 7.0, -1.0) * mod(localPos, 1.0) + vec3(-0.5, -3.5, 0.5);
+	
+	vec3 lightPos = (WORLD*vec4(entitySpacePosition.xyz, 0.0)).xyz;
+	lightPos.y += 1.5;
+	
+	vec3 blockPos = lightPos-localPos;
+	blockPosition = blockPos;
+	
+	
+	// Checks which block faces are oriented towards light, and which are against
+	ivec3 f1 = ivec3(lessThan(blockPos, vec3(-0.5))); // Positive faces
+	ivec3 f2 = ivec3(greaterThan(blockPos, vec3(0.5))); // Negative faces
+	
+	
+	// Make a list of edges in-between shadowed and lit faces.
+	vec3 edges[7] = vec3[7](vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0), vec3(0.0));
+	int i = 0;
+	
+	edges[i] = f1.x+f1.y==1 ? vec3(1, 1, 0) : edges[i];
+	i += f1.x+f1.y==1 ? 1 : 0;
+	
+	edges[i] = f1.x+f1.z==1 ? vec3(1, 0, 1) : edges[i];
+	i += f1.x+f1.z==1 ? 1 : 0;
+	
+	edges[i] = f1.x+f2.y==1 ? vec3(1, -1, 0) : edges[i];
+	i += f1.x+f2.y==1 ? 1 : 0;
+	
+	edges[i] = f1.x+f2.z==1 ? vec3(1, 0, -1) : edges[i];
+	i += f1.x+f2.z==1 ? 1 : 0;
+	
+	
+	edges[i] = f2.x+f1.y==1 ? vec3(-1, 1, 0) : edges[i];
+	i += f2.x+f1.y==1 ? 1 : 0;
+	
+	edges[i] = f2.x+f1.z==1 ? vec3(-1, 0, 1) : edges[i];
+	i += f2.x+f1.z==1 ? 1 : 0;
+	
+	edges[i] = f2.x+f2.y==1 ? vec3(-1, -1, 0) : edges[i];
+	i += f2.x+f2.y==1 ? 1 : 0;
+	
+	edges[i] = f2.x+f2.z==1 ? vec3(-1, 0, -1) : edges[i];
+	i += f2.x+f2.z==1 ? 1 : 0;
+	
+	
+	edges[i] = f1.y+f1.z==1 ? vec3(0, 1, 1) : edges[i];
+	i += f1.y+f1.z==1 ? 1 : 0;
+	
+	edges[i] = f1.y+f2.z==1 ? vec3(0, 1, -1) : edges[i];
+	i += f1.y+f2.z==1 ? 1 : 0;
+	
+	edges[i] = f2.y+f1.z==1 ? vec3(0, -1, 1) : edges[i];
+	i += f2.y+f1.z==1 ? 1 : 0;
+	
+	edges[i] = f2.y+f2.z==1 ? vec3(0, -1, -1) : edges[i];
+	i += f2.y+f2.z==1 ? 1 : 0;
+	
+	
+	int ID = gl_VertexID%24;
+	vec3 edge = edges[ID/4];
+	
+	// Magically determines face orientation.
+	bool flip = dot(cross(abs(edge)*(0.5*edge+blockPos), edge), vec3(1.0)) >= 0.0;
+	
+	int v1 = flip ? 0 : 1;
+	int v2 = flip ? 1 : 0;
+	
+	int v3 = flip ? 2 : 3;
+	int v4 = flip ? 3 : 2;
+	
+	int newID = ID%4;
+	
+	// Assign coordinates to each vertex.
+	vec3 axis = 1.0-abs(edge);
+	vec3 p = 0.5*(edge-axis);
+	p = newID == v2 ? p+axis : p;
+	p = newID > 1 ? 0.6*(edge+axis) : p; // 0.6 = 0.5 + light radius = 0.5 + 0.1
+	p = newID == v4 ? -1.2 * axis + p : p; // 1.2 = 2 * 0.6
+	
+	p += blockPos;
+	
+	p = newID > 1 ? 64.0*normalize(p) : p;
+
+
+	worldMat = WORLD;
+	worldMat[3] = vec4(0,1.507,0,1);
+	worldMat = worldMat*inverse(WORLDVIEWPROJ)*PROJ;
+	
+	mat4 worldViewProj = WORLDVIEWPROJ * inverse(WORLD);
+	
+	vec4 worldPos = WORLD * entitySpacePosition;
+	worldPos.xyz += p - lightPos;
+	worldPos = worldViewProj * worldPos;
+	
+	viewPosition = (inverse(PROJ) * worldPos).xyz;
+
+	gl_Position = edge == vec3(0) ? vec4(0,0,0,1) : worldPos;
+}

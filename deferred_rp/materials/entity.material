@@ -2,10 +2,74 @@
 	"materials": {
 		"version": "1.0.0",
 		"final_deferred_pass:entity_static": {
+			"+defines": ["NO_TEXTURE"],
+			"-defines": ["FANCY"],
+			"+states": [ "DisableDepthWrite", "DisableDepthTest" ],
 			"fragmentShader": "shaders/final_deferred_pass.fragment",
-			"vertexShader": "shaders/final_deferred_pass.vertex",
-			"+states": [ "Blending" ],
-			"msaaSupport": "NonMSAA"
+			"vertexShader": "shaders/final_deferred_pass.vertex"
+		},
+		"point_light:entity_static": {
+			"+defines": ["SHADOWS"],
+			"+states": [ "StencilWrite", "DisableDepthWrite", "DisableDepthTest", "EnableStencilTest" ],
+			"fragmentShader": "shaders/point_light.fragment",
+			"vertexShader": "shaders/point_light_entity.vertex",
+			"frontFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"stencilRef": 2,
+			"stencilWriteMask": 2,
+			
+			"+samplerStates": [
+				{
+					"samplerIndex": 0,
+					"textureFilter": "Point",
+					"textureWrap": "Repeat"
+				}
+			]
+		},
+		"shadow_stencil_clear:entity_static": {
+			"+defines": ["NO_TEXTURE"],
+			"-defines": ["FANCY"],
+			"+states": [ "StencilWrite", "DisableColorWrite", "DisableDepthWrite", "EnableStencilTest" ],
+			"depthFunc": "Greater",
+			"frontFace": {
+				"stencilFunc": "NotEqual",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "NotEqual",
+				"stencilPassOp": "Replace"
+			},
+			
+			"stencilRef": 0,
+			"stencilReadMask": 8,
+			"stencilWriteMask": 8
+		},
+		"deferred_shadow_volume:entity_static": {
+			"+states": [ "DisableDepthWrite", "DisableColorWrite", "DisableAlphaWrite", "StencilWrite", "EnableStencilTest" ],
+			"fragmentShader": "shaders/deferred_shadow_volume.fragment",
+			"vertexShader": "shaders/deferred_shadow_volume.vertex",
+			"frontFace": {
+				"stencilFunc": "NotEqual",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "NotEqual",
+				"stencilPassOp": "Replace"
+			},
+		
+			"stencilRef": 8,
+			"stencilReadMask": 8,
+			"stencilWriteMask": 8
 		},
 		"entity_alphatest_ui:entity_alphatest": {
 			"+defines": [ "IN_UI" ]

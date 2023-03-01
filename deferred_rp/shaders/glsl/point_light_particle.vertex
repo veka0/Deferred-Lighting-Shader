@@ -1,0 +1,47 @@
+#version 300 es
+
+#include "uniformWorldConstants.h"
+
+precision highp float;
+
+in highp vec4 POSITION;
+in vec4 COLOR;
+in highp vec2 TEXCOORD_0;
+
+flat out vec4 color;
+out highp vec3 position;
+out highp vec3 origin;
+
+const float max_scale = 64.0;
+
+void main()
+{
+	gl_Position = WORLDVIEWPROJ * POSITION;
+	
+	int id = gl_VertexID % 4;
+	color.rgb = 16.0*COLOR.rgb;
+	color.a = float(gl_VertexID/4)+dot(COLOR, vec4(1.0,2.0,3.0,4.0));
+	vec2 test = vec2((id == 1 || id == 2) ? 1 : 0, id < 2 ? 1 : 0);
+	
+	position = (WORLDVIEW*POSITION).xyz;
+#ifdef DOWN
+	origin = (WORLDVIEW*(POSITION+COLOR.a*max_scale*vec4(test.x-0.5, 0.5, test.y-0.5, 0.0))).xyz;
+#endif
+#ifdef UP
+	origin = (WORLDVIEW*(POSITION+COLOR.a*max_scale*vec4(-test.x+0.5, -0.5, test.y-0.5, 0.0))).xyz;
+#endif
+#ifdef RIGHT
+	origin = (WORLDVIEW*(POSITION+COLOR.a*max_scale*vec4(0.5, test.y-0.5, test.x-0.5, 0.0))).xyz;
+#endif
+#ifdef LEFT
+	origin = (WORLDVIEW*(POSITION+COLOR.a*max_scale*vec4(-0.5, test.y-0.5, -test.x+0.5, 0.0))).xyz;
+#endif
+#ifdef FRONT
+	origin = (WORLDVIEW*(POSITION+COLOR.a*max_scale*vec4(-test.x+0.5, test.y-0.5, 0.5, 0.0))).xyz;
+#endif
+#ifdef BACK
+	origin = (WORLDVIEW*(POSITION+COLOR.a*max_scale*vec4(test.x-0.5, test.y-0.5, -0.5, 0.0))).xyz;
+#endif
+	position.z *= -1.0;
+	origin.z *= -1.0;
+}

@@ -5,18 +5,68 @@
 			"identifier": "deferred:point_light",
 			"animations": {
 				"ac": "controller.animation.deferred.point_light",
-				"anim": "animation.deferred.point_light.lamp" // Note: for whatever reason it doesn't work without any animations specified.
+				"shadow": "animation.deferred.point_light.snap_shadow" // Note: for whatever reason it doesn't work without any animations specified.
+			},
+			"materials": {
+				"default": "deferred_shadow_volume",
+				"point_light": "point_light",
+				"clear_shadow": "shadow_stencil_clear"
+			},
+			"textures": {
+				"default": "textures/ui/spyglass_scope",
+				"blue_noise": "textures/blue_noise"
+			},
+			"geometry": {
+				"default": "geometry.shadow_volume",
+				"point_light": "geometry.point_light"
 			},
 			"particle_effects": {
 				"light_volume": "deferred:light_volume",
 				"light_volume_fog": "deferred:light_volume_fog",
+				"light_volume_only_fog": "deferred:light_volume_only_fog",
 				"lamp": "deferred:lamp"
 			},
 			"scripts": {
-				"initialize": ["v.emitted = 0;"],
-				"animate": ["ac"],
+				"variables": { "variable.id": "public" },
+				"initialize": ["v.emitted = 0;", "v.light = 0;", "v.id = math.random(0, 1);"],
+				"pre_animation": [ "q.actor_property('deferred:shadow') ? {t.id = 0; for_each(t.light, q.get_nearby_entities(100, 'deferred:point_light'), {t.light->v.id == v.id ? {break;}; t.light->q.actor_property('deferred:shadow') ? {t.id = t.id+1;};}); v.light = t.id;};"],
+				"animate": [{"shadow": "q.actor_property('deferred:shadow')"}, "ac"],
 				"should_update_bones_and_effects_offscreen": true
-			}
+			},
+			"render_controllers": [
+				// 8 lights with enabled shadows.
+				{"controller.render.deferred.shadow_volume": "v.light == 0 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 0 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 0 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 1 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 1 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 1 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 2 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 2 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 2 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 3 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 3 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 3 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 4 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 4 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 4 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 5 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 5 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 5 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 6 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 6 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 6 && q.actor_property('deferred:shadow')"},
+				
+				{"controller.render.deferred.shadow_volume": "v.light == 7 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.point_light": "v.light == 7 && q.actor_property('deferred:shadow')"},
+				{"controller.render.deferred.clear_shadow": "v.light == 7 && q.actor_property('deferred:shadow')"}
+			]
 		}
 	}
 }

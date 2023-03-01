@@ -24,11 +24,30 @@
 		"controller.render.deferred.final_pass": {
 			"geometry": "Geometry.final_pass_quad",
 			"materials": [ { "*": "Material.final_pass" } ],
-			"textures": [
-				"Texture.default"
-			],
+			"textures":[ "Texture.default" ],
 			"ignore_lighting": true,
 			"uv_anim": {"offset": ["v.exposure", 0], "scale": [1,1]}
+		},
+		
+		"controller.render.deferred.clear_shadow": {
+			"geometry": "Geometry.point_light",
+			"materials": [ { "*": "Material.clear_shadow" } ],
+			"ignore_lighting": true
+		},
+		
+		"controller.render.deferred.point_light": {
+			"geometry": "Geometry.point_light",
+			"materials": [ { "*": "Material.point_light" } ],
+			"textures": [
+				"Texture.blue_noise"
+			],
+			"ignore_lighting": true,
+			"overlay_color": {
+				"r": "q.actor_property('deferred:color_r')/255",
+				"g": "q.actor_property('deferred:color_g')/255",
+				"b": "q.actor_property('deferred:color_b')/255",
+				"a": "v.id*1000"
+			}
 		},
 		
 		"controller.render.deferred.digit1": {

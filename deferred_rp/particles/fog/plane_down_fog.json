@@ -5,7 +5,7 @@
 			"identifier": "deferred:plane_down_fog",
 			"basic_render_parameters": {
 				"material": "particles_light_fog.d",
-				"texture": "textures/particle/particles"
+				"texture": "textures/blue_noise"
 			}
 		},
 		"components": {
@@ -28,7 +28,7 @@
 				"max_lifetime": 0
 			},
 			"minecraft:particle_lifetime_expression": {
-				"expiration_expression": "!q.actor_property('deferred:fog')"
+				"expiration_expression": "!q.actor_property('deferred:fog') || q.actor_property('deferred:shadow')"
 			},
 			"minecraft:particle_appearance_billboard": {
 				"size": [ "v.scale", "v.scale" ],

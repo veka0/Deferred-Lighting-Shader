@@ -1,0 +1,60 @@
+#version 300 es
+precision highp float;
+
+#include "uniformWorldConstants.h"
+#include "uniformEntityConstants.h"
+#include "uniformPerFrameConstants.h"
+#ifdef USE_SKINNING
+#include "uniformAnimationConstants.h"
+#endif
+
+#line 13
+
+in mediump vec4 POSITION;
+in vec2 TEXCOORD_0;
+in vec4 NORMAL;
+#if defined(USE_SKINNING)
+#ifdef MCPE_PLATFORM_NX
+in uint BONEID_0;
+#else
+in float BONEID_0;
+#endif
+#endif
+
+flat out vec4 color;
+out highp vec3 position;
+out highp vec3 origin;
+
+in highp vec4 overlayColor;
+
+void main()
+{
+	POS4 entitySpacePosition;
+	POS4 entitySpaceNormal;
+
+#ifdef USE_SKINNING
+	#if defined(LARGE_VERTEX_SHADER_UNIFORMS)
+		entitySpacePosition = BONES[int(BONEID_0)] * POSITION;
+		entitySpaceNormal = BONES[int(BONEID_0)] * NORMAL;
+	#else
+		entitySpacePosition = BONE * POSITION;
+		entitySpaceNormal = BONE * NORMAL;
+	#endif
+#else
+	entitySpacePosition = POSITION * vec4(1, 1, 1, 1);
+	entitySpaceNormal = NORMAL * vec4(1, 1, 1, 0);
+#endif
+	POS4 pos = WORLDVIEWPROJ * entitySpacePosition;
+	gl_Position = pos;
+
+	color = OVERLAY_COLOR; // 4th component is ID.
+	
+	// WORLDVIEW is garbage, compute proper view matrix instead.
+	mat4 worldview = inverse(PROJ)*WORLDVIEWPROJ;
+	
+	position = (worldview*entitySpacePosition).xyz;
+	position.z *= -1.0;
+	
+	origin = (worldview*vec4(0,24.0,0,1)).xyz;
+	origin.z *= -1.0;
+}

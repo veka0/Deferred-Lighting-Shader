@@ -1,0 +1,64 @@
+#include "fragmentHeader.h"
+precision highp float;
+
+#include "uniformEntityConstants.h"
+#include "uniformWorldConstants.h"
+#include "uniformPerFrameConstants.h"
+
+
+flat in vec3 blockPosition;
+in vec3 viewPosition;
+flat in mat4 worldMat;
+
+out vec4 finalColor;
+
+const float PHI = 1.61803398874989484820459;  // Φ = Golden Ratio
+const float R = 0.1; // Light radius.
+const float PI2 = 6.2831853076; // 2π
+
+
+// Based on:
+// Gold Noise ©2015 dcerisano@standard3d.com
+float gold_noise(float seed){
+	   return fract(tan(distance(gl_FragCoord.xy*PHI, gl_FragCoord.xy)*(OVERLAY_COLOR.a+seed+fract(TIME)))*gl_FragCoord.x);
+}
+
+
+// Based on box intersector from https://iquilezles.org/articles/intersectors
+bool boxIntersection(vec3 ro, vec3 rd) 
+{
+	vec3 m = 1.0/rd; // can precompute if traversing a set of aligned boxes
+	vec3 n = m*ro;   // can precompute if traversing a set of aligned boxes
+	vec3 k = 0.5*abs(m);
+	vec3 t1 = -n - k;
+	vec3 t2 = -n + k;
+	float tN = max( max( t1.x, t1.y ), t1.z );
+	float tF = min( min( t2.x, t2.y ), t2.z );
+	return tN>tF || tF<0.0; // no intersection
+}
+
+void main()
+{
+	float depth = gl_LastFragDepthARM;
+	if (depth >= 1.0) { discard; }
+	float viewZ = -PROJ[3][2] / ((depth * 2.0 - 1.0) + PROJ[2][2]);
+	vec3 entityPos = viewZ * viewPosition / viewPosition.z;
+	
+	entityPos = (worldMat*vec4(entityPos, 1.0)).xyz;
+	
+	// Uniformly sample spherical light source.
+	float D = length(entityPos);
+	float Z = mix((D <= R) ? -1.0 : sqrt(D*D-R*R)/D, 1.0, gold_noise(0.1));
+	float A = PI2*gold_noise(0.2);
+	
+	float S = sqrt(1.0-Z*Z);
+	
+	vec3 xVec = normalize(cross(entityPos, vec3(0,1,0)));
+	vec3 yVec = normalize(cross(entityPos, xVec));
+	
+	vec3 dir = S*(cos(A)*xVec + sin(A)*yVec) - Z*entityPos/D;
+	
+	if (boxIntersection(entityPos-blockPosition, dir)) { discard;}
+	
+	finalColor = vec4(1.0);
+}

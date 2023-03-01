@@ -67,8 +67,6 @@ void main()
 	vec4 finalOutput = albedo;
 	
 	finalOutput.rgb = 0.5*mix( finalOutput.rgb*lighting.rgb, fogColor.rgb, fogColor.a );
-
-	albedo = 15.0*albedo/31.0;
 	
 	gl_FragColor = index == 0 ? vec4(0.0, finalOutput.r, albedo.r, finalOutput.a) : index == 1 ? vec4(0.0, finalOutput.g, albedo.g, finalOutput.a) : vec4(0.0, finalOutput.b, albedo.b, finalOutput.a);
 }

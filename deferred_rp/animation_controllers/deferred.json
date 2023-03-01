@@ -5,15 +5,17 @@
 			"states": {
 				"default": {
 					"transitions": [
-						{"particles": "!q.actor_property('deferred:fog') && v.emitted != 1"},
-						{"particles_fog": "q.actor_property('deferred:fog') && v.emitted != 2"}
+						{"particles": "!q.actor_property('deferred:shadow') && !q.actor_property('deferred:fog') && v.emitted != 1"},
+						{"particles_fog": "!q.actor_property('deferred:shadow') && q.actor_property('deferred:fog') && v.emitted != 2"},
+						{"particles_only_fog": "q.actor_property('deferred:shadow') && q.actor_property('deferred:fog') && v.emitted != 3"},
+						{"emitted_only_fog": "q.actor_property('deferred:shadow') && q.actor_property('deferred:fog') && v.emitted == 3"}
 					]
 				},
 				"particles": {
 					"on_entry": ["v.emitted = 1;"],
 					"on_exit": ["v.emitted = 0;"],
 					"transitions": [
-						{"default": "q.actor_property('deferred:fog')"}
+						{"default": "q.actor_property('deferred:fog') || q.actor_property('deferred:shadow')"}
 					],
 					"particle_effects": [
 						{"effect": "light_volume"}
@@ -23,10 +25,26 @@
 					"on_entry": ["v.emitted = 2;"],
 					"on_exit": ["v.emitted = 0;"],
 					"transitions": [
-						{"default": "!q.actor_property('deferred:fog')"}
+						{"default": "!q.actor_property('deferred:fog') || q.actor_property('deferred:shadow')"}
 					],
 					"particle_effects": [
 						{"effect": "light_volume_fog"}
+					]
+				},
+				"particles_only_fog": {
+					"on_entry": ["v.emitted = 3;"],
+					"on_exit": ["v.emitted = 0;"],
+					"transitions": [
+						{"default": "!q.actor_property('deferred:fog') || !q.actor_property('deferred:shadow')"}
+					],
+					"particle_effects": [
+						{"effect": "light_volume_only_fog"}
+					]
+				},
+				"emitted_only_fog": {
+					"on_exit": ["v.emitted = 0;"],
+					"transitions": [
+						{"default": "!q.actor_property('deferred:fog') || !q.actor_property('deferred:shadow')"}
 					]
 				}
 			}

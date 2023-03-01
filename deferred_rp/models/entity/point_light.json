@@ -1,0 +1,32 @@
+{
+	"format_version": "1.16.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.point_light",
+				"texture_width": 16,
+				"texture_height": 16,
+				"visible_bounds_width": 64,
+				"visible_bounds_height": 64,
+				"visible_bounds_offset": [0, -32, 0]
+			},
+			"bones": [
+				{
+					"name": "point_light",
+					"pivot": [0, 0, 0],
+					"cubes": [
+						{
+
+							"origin": [ -16, -16, -16 ],
+
+							"size": [ 32, 32, 32 ],
+
+							"uv": [ 0, 0 ]
+
+						}
+					]
+				}
+			]
+		}
+	]
+}
