@@ -112,7 +112,8 @@
 			"+samplerStates": [
 				{
 					"samplerIndex": 0,
-					"textureFilter": "Point"
+					"textureFilter": "Point",
+					"textureWrap": "Repeat"
 				}
 			],
 			"msaaSupport": "NonMSAA",

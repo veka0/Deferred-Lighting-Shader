@@ -3,7 +3,7 @@ precision highp float;
 
 #include "uniformEntityConstants.h"
 #include "uniformWorldConstants.h"
-#include "uniformPerFrameConstants.h"
+#include "uniformInterFrameConstants.h"
 
 
 flat in vec3 blockPosition;
@@ -20,12 +20,12 @@ const float PI2 = 6.2831853076; // 2π
 // Based on:
 // Gold Noise ©2015 dcerisano@standard3d.com
 float gold_noise(float seed){
-	   return fract(tan(distance(gl_FragCoord.xy*PHI, gl_FragCoord.xy)*(OVERLAY_COLOR.a+seed+fract(TIME)))*gl_FragCoord.x);
+	   return fract(tan(distance(gl_FragCoord.xy*PHI, gl_FragCoord.xy)*(OVERLAY_COLOR.a+seed+fract(TOTAL_REAL_WORLD_TIME)))*gl_FragCoord.x);
 }
 
 
 // Based on box intersector from https://iquilezles.org/articles/intersectors
-bool boxIntersection(vec3 ro, vec3 rd) 
+float boxIntersection( vec3 ro, vec3 rd ) 
 {
 	vec3 m = 1.0/rd; // can precompute if traversing a set of aligned boxes
 	vec3 n = m*ro;   // can precompute if traversing a set of aligned boxes
@@ -34,7 +34,8 @@ bool boxIntersection(vec3 ro, vec3 rd)
 	vec3 t2 = -n + k;
 	float tN = max( max( t1.x, t1.y ), t1.z );
 	float tF = min( min( t2.x, t2.y ), t2.z );
-	return tN>tF || tF<0.0; // no intersection
+	if( tN>tF || tF<0.0) return -1.0; // no intersection
+	return tN;
 }
 
 void main()
@@ -58,7 +59,9 @@ void main()
 	
 	vec3 dir = S*(cos(A)*xVec + sin(A)*yVec) - Z*entityPos/D;
 	
-	if (boxIntersection(entityPos-blockPosition, dir)) { discard;}
+	float dist = boxIntersection(entityPos-blockPosition, dir);
+	
+	if (dist < 0.00001 || dist > D) { discard;}
 	
 	finalColor = vec4(1.0);
 }

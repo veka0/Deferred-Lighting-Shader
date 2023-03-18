@@ -91,9 +91,9 @@ void main()
 	vec3 swizzlePos = quadSwizzlePos();
 
 #if USE_TEXEL_AA
-	highp vec4 diffuse = quadSwizzle0(texture2D_AA(TEXTURE_0, uv0), swizzlePos.x);
+	highp vec4 diffuse = texture2D_AA(TEXTURE_0, quadSwizzle0(uv0, swizzlePos.x));
 #else
-	highp vec4 diffuse = quadSwizzle0(texture2D(TEXTURE_0, uv0), swizzlePos.x);
+	highp vec4 diffuse = texture2D(TEXTURE_0, quadSwizzle0(uv0, swizzlePos.x));
 #endif
 	
 #ifdef SEASONS_FAR
@@ -135,17 +135,12 @@ vec4 inColor = color;
 	diffuse.a = 1.0;
 #endif
 	
-	int index = quadSwizzleIndex(swizzlePos);
-	
 	vec4 col = L*diffuse;
 
 #ifdef BLEND
 	vec3 prevCol = gl_LastFragColorARM.rgb;
-	vec3 col0 = quadSwizzle0(prevCol, swizzlePos.x);
-	vec3 col1 = quadSwizzle1(prevCol, swizzlePos.x);
-	vec3 col2 = quadSwizzle2(prevCol, swizzlePos.yz);
 	
-	vec3 lighting = mix(2.0*vec3(col0.g, col1.g, col2.g) + 2.0*round(31.0*vec3(col0.r, col1.r, col2.r)/2.0), col.rgb, col.a);
+	vec3 lighting = mix(2.0*(prevCol.ggg + round(31.0*prevCol.rrr/2.0)), col.rgb, col.a);
 	
 #ifdef FOG
 	lighting.rgb = mix( lighting.rgb, fogColor.rgb, fogColor.a );
@@ -154,7 +149,8 @@ vec4 inColor = color;
 	vec3 hdrCol1 = mod(31.0*lighting, 64.0)/63.0;
 	vec3 hdrCol2 = 2.0*floor(31.0*lighting/64.0)/31.0;
 	
-	finalColor = index == 0 ? vec4(hdrCol2.r, hdrCol1.r, col0.b, 1.0) : index == 1 ? vec4(hdrCol2.g, hdrCol1.g, col1.b, 1.0) : vec4(hdrCol2.b, hdrCol1.b, col2.b, 1.0);
+	int index = quadSwizzleIndex(swizzlePos);
+	finalColor = index == 0 ? vec4(hdrCol2.r, hdrCol1.r, prevCol.b, 1.0) : index == 1 ? vec4(hdrCol2.g, hdrCol1.g, prevCol.b, 1.0) : vec4(hdrCol2.b, hdrCol1.b, prevCol.b, 1.0);
 #else // BLEND
 	
 	float dither = ditherSpread * bayer8[int(0.5*gl_FragCoord.y)%8 + 8*(int(0.5*gl_FragCoord.x)%8)];
@@ -168,6 +164,7 @@ vec4 inColor = color;
 	col.rgb -= dither;
 #endif
 	
+	int index = quadSwizzleIndex(swizzlePos);
 	finalColor = index == 0 ? vec4(0.0, col.r, diffuse.r, 1.0) : index == 1 ? vec4(0.0, col.g, diffuse.g, 1.0) : vec4(0.0, col.b, diffuse.b, 1.0);
 
 #endif // BLEND

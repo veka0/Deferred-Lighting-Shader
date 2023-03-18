@@ -21,6 +21,19 @@ flat out vec3 blockPosition;
 out vec3 viewPosition;
 flat out mat4 worldMat;
 
+// Based on box intersector from https://iquilezles.org/articles/intersectors
+bool boxIntersection(vec3 ro, vec3 rd) 
+{
+	vec3 m = 1.0/rd; // can precompute if traversing a set of aligned boxes
+	vec3 n = m*ro;   // can precompute if traversing a set of aligned boxes
+	vec3 k = 0.6*abs(m);
+	vec3 t1 = -n - k;
+	vec3 t2 = -n + k;
+	float tN = max( max( t1.x, t1.y ), t1.z );
+	float tF = min( min( t2.x, t2.y ), t2.z );
+	return tN>tF || tF<0.0; // no intersection
+}
+
 void main()
 {
 	vec4 entitySpacePosition;
@@ -132,6 +145,14 @@ void main()
 	vec4 worldPos = WORLD * entitySpacePosition;
 	worldPos.xyz += p - lightPos;
 	worldPos = worldViewProj * worldPos;
+	
+	
+	// If camera is inside of the shadow, display a full screen quad instead of shadow volume.
+	bool outside = boxIntersection(-blockPos, normalize(vec3(0,1.5,0)-WORLD[3].xyz));
+	
+	worldPos = outside ? worldPos : vec4(newID == 1 || newID == 2 ? 1.0 : -1.0, newID >= 2 ? 1.0 : -1.0, 0.0, 1.0);
+	worldPos = outside || ID/4 == 0 ? worldPos : vec4(0,0,0,1);
+	
 	
 	viewPosition = (inverse(PROJ) * worldPos).xyz;
 

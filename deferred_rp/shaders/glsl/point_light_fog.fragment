@@ -1,6 +1,5 @@
 #include "fragmentHeader.h"
 #include "uniformWorldConstants.h"
-#include "uniformPerFrameConstants.h"
 #include "uniformInterFrameConstants.h"
 precision highp float;
 #include "quadSwizzle.glsl"
@@ -53,31 +52,23 @@ void main()
 	
 	vec3 col = gl_LastFragColorARM.rgb;
 	
-	vec3 col0 = quadSwizzle0(col, swizzlePos.x);
-	vec3 col1 = quadSwizzle1(col, swizzlePos.x);
-	vec3 col2 = quadSwizzle2(col, swizzlePos.yz);
+	vec3 albedo = col.bbb;
 	
-	vec3 albedo = vec3(col0.b, col1.b, col2.b);
-	
-	vec3 lighting = 2.0*vec3(col0.g, col1.g, col2.g) + 2.0*round(31.0*vec3(col0.r, col1.r, col2.r)/2.0);
+	vec3 lighting = 2.0*(col.ggg + round(31.0*col.rrr/2.0));
 	
 	
 	// Convert the sky to HDR if it hasn't been converted yet.
 	float condition = (gl_LastFragDepthARM >= 1.0) && ((gl_LastFragStencilARM & 2) == 0) ? 1.0 : 0.0;
-	albedo = mix(albedo, vec3(col0.r, col1.g, col2.b), vec3(quadSwizzle0(condition, swizzlePos.x), quadSwizzle1(condition, swizzlePos.x), quadSwizzle2(condition, swizzlePos.yz) ));
-	lighting = mix(lighting, vec3(col0.r, col1.g, col2.b), vec3(quadSwizzle0(condition, swizzlePos.x), quadSwizzle1(condition, swizzlePos.x), quadSwizzle2(condition, swizzlePos.yz) ));
+	albedo = mix(albedo, col, vec3(quadSwizzle0(condition, swizzlePos.x), quadSwizzle1(condition, swizzlePos.x), quadSwizzle2(condition, swizzlePos.yz) ));
+	lighting = mix(lighting, col, vec3(quadSwizzle0(condition, swizzlePos.x), quadSwizzle1(condition, swizzlePos.x), quadSwizzle2(condition, swizzlePos.yz) ));
 	
 	
 	float fog = fogIntensity*calcFogLight(viewLen, normalize(position.xyz));
 	lighting += color.rgb*fog;
-	
-	
-	// Use lighting from a single fragment across the quad, to avoid chromatic artefacts.
-	lighting = quadSwizzle0(lighting, swizzlePos.x);
-	
+
 
 	// Blue noise dithering (animated in time, different for each light).
-	vec3 dither = ditherSpread * (fract(texture(TEXTURE_0, floor(0.5*gl_FragCoord.xy)/64.0).rgb+phi*(10.0*fract(TIME)+color.a+0.5))-0.5);
+	vec3 dither = ditherSpread * (fract(texture(TEXTURE_0, floor(0.5*gl_FragCoord.xy)/64.0).rgb+phi*(10.0*fract(TOTAL_REAL_WORLD_TIME)+color.a+0.5))-0.5);
 
 	
 	// Pack updated HDR color and albedo back into the framebuffer.

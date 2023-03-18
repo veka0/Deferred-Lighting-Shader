@@ -6,5 +6,5 @@ in vec2 TEXCOORD_0;
 
 void main()
 {
-	gl_Position = vec4(round(2.0*(TEXCOORD_0-0.5)), 1.0, 1.0);
+	gl_Position = vec4(round(2.0*(TEXCOORD_0-0.5)), 0.999999, 1.0);
 }

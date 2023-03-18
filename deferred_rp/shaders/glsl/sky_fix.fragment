@@ -1,4 +1,5 @@
 #include "fragmentHeader.h"
+#include "uniformInterFrameConstants.h"
 #include "quadSwizzle.glsl"
 
 precision highp float;
@@ -10,12 +11,22 @@ inout vec4 finalColor;
 out vec4 finalColor;
 #endif
 
+const float ditherSpread = 20.0/255.0;
+const float phi = 6.18033988749894848204; // 10 * phi
+
+LAYOUT_BINDING(0) uniform sampler2D TEXTURE_0;
+
 void main()
 {
 	vec3 swizzlePos = quadSwizzlePos();
 	
-	vec3 col = 0.5*gl_LastFragColorARM.rgb;
+	vec4 col = gl_LastFragColorARM;
 	int index = quadSwizzleIndex(swizzlePos);
 	
-	finalColor = index == 0 ? vec4(0.0, col.rr, 1.0) : index == 1 ? vec4(0.0, col.gg, 1.0) : vec4(0.0, col.bb, 1.0);
+	vec3 dither = ditherSpread * (fract(texture(TEXTURE_0, floor(0.5*gl_FragCoord.xy)/64.0).rgb+phi*fract(TOTAL_REAL_WORLD_TIME))-0.5);
+	col.rgb += dither;
+	
+	col = index == 0 ? vec4(0.0, col.rb, 1.0) : index == 1 ? vec4(0.0, col.gb, 1.0) : vec4(0.0, col.bb, 1.0);
+	col.g *= 0.5;
+	finalColor = col;
 }

@@ -5,7 +5,7 @@
 			"identifier": "deferred:sky_fix",
 			"basic_render_parameters": {
 				"material": "particles_sky_fix",
-				"texture": "textures/particle/particles"
+				"texture": "textures/blue_noise"
 			}
 		},
 		"components": {
