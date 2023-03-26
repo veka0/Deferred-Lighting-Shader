@@ -20,6 +20,7 @@ The following conditions has to be met in order to use this add-on
 	- `deferred:remove_light`
 	- `deferred:color_randomizer`
 	- `deferred:fog_toggle`
+	- `deferred:shadow_toggle`
 	- When holding either item, all light sources within 30 blocks will have a lightbulb billboard icon displayed over them
 - #### Chat commands
 	- `.help` displays help message
@@ -32,17 +33,42 @@ The following conditions has to be met in order to use this add-on
 	- Light sources are represented with `deferred:point_light` entities
 	- Color is stored in `r`, `g` and `b` scoreboards
 	- Fog is controlled by `deferred:fog` tag
-	- After changing color or fog, `deferred:sync` event must be used to synchronize the changes
+	- Shadow is controlled by `deferred:shadow` tag
+	- After changing color, fog of shadows, `deferred:sync` event must be used to synchronize the changes
 	- `deferred:despawn` event has to be used to remove light sources, since they're invulnerable otherwise (even to `/kill`)
 	- `deferred:random_color` event randomizes color
 	- `deferred:switch_fog` event toggles fog On and Off
+	- `deferred:switch_shadow` event toggles shadow On and Off
 - #### HDR
 	- Exposure can be adjusted by looking directly down and rotating the camera clockwise and counterclockwise
 	- Looking directly up resets the exposure to 100%
 	- Exposure ranges from 10% to 100%
 	- During adjustment, exposure percentage indicator is visible
-## New HDR Screenshots
+- #### Shadows
+	- Up to 8 light sources with shadows can be rendered at a time
+	- Blocks only cast shadows if they are within 11x11x11 cube from the light source
+	- Not all blocks can be illuminated by lights with enabled shadows
+	- Not all blocks can cast shadows
+	- Blocks that do have shadows cast them as a solid 1x1x1 cube, ignoring actual geometry or texture
+## Shadows Update Screenshots
 > Hover over a screenshot to see which map was used, click on it to get to the download page
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003915846520842/Screenshot_20230227-171453.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003917020934154/Screenshot_20230227-020915.png "Vanilla screenshot")
+
+[![Minecraft RTX (Gamescom 2019) Map recreation](https://cdn.discordapp.com/attachments/327203882180542484/1088003916421144577/Screenshot_20230227-133420.png "Minecraft RTX (Gamescom 2019) Map recreation")](https://www.planetminecraft.com/project/minecraft-rtx-gamescom-2019-map "Minecraft RTX (Gamescom 2019) Map recreation")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003918820290640/Screenshot_20230210-185248.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003919524929596/Screenshot_20230210-131009.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003918203723796/Screenshot_20230214-155121.png "Vanilla screenshot")
+
+![Vanilla screenshot](https://media.discordapp.net/attachments/327203882180542484/1077578729557078047/Screenshot_20230221-140316.png?width=1520&height=780 "Vanilla screenshot")
+
+
+## HDR Update Screenshots
 
 ![Vanilla screenshot](https://cdn.discordapp.com/attachments/286649185468678144/1047808803787259964/Screenshot_20221201-103239.png "Vanilla screenshot")
 
@@ -59,7 +85,7 @@ The following conditions has to be met in order to use this add-on
 ![Vanilla screenshot](https://cdn.discordapp.com/attachments/286649185468678144/1055939267240656896/Screenshot_20221223-175756.png "Vanilla screenshot")
 
 
-##  Old Screenshots
+## Initial Release Screenshots
 
 [![Minecraft RTX (Gamescom 2019) Map recreation](https://cdn.discordapp.com/attachments/286649185468678144/1030978698444279818/Screenshot_20221016-005412.png "Minecraft RTX (Gamescom 2019) Map recreation")](https://www.planetminecraft.com/project/minecraft-rtx-gamescom-2019-map "Minecraft RTX (Gamescom 2019) Map recreation")
 
