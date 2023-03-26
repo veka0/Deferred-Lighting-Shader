@@ -4,9 +4,22 @@
 		"final_deferred_pass:entity_static": {
 			"+defines": ["NO_TEXTURE"],
 			"-defines": ["FANCY"],
-			"+states": [ "DisableDepthWrite", "DisableDepthTest" ],
+			"+states": [ "DisableDepthWrite", "DisableDepthTest", "EnableStencilTest", "StencilWrite" ],
 			"fragmentShader": "shaders/final_deferred_pass.fragment",
-			"vertexShader": "shaders/final_deferred_pass.vertex"
+			"vertexShader": "shaders/final_deferred_pass.vertex",
+			
+			"frontFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"backFace": {
+				"stencilFunc": "Always",
+				"stencilPassOp": "Replace"
+			},
+		
+			"stencilRef": 2,
+			"stencilWriteMask": 2
 		},
 		"point_light:entity_static": {
 			"+defines": ["SHADOWS"],

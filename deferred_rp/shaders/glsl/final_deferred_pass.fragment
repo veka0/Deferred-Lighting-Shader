@@ -17,13 +17,18 @@ void main()
 {
 	vec3 swizzlePos = quadSwizzlePos();
 	
-	vec3 col = gl_LastFragColorARM.rgb;
+	vec4 col = vec4(gl_LastFragColorARM.rgb, float((gl_LastFragStencilARM & 2) > 0));
 	
-	vec3 col0 = quadSwizzle0(col, swizzlePos.x);
-	vec3 col1 = quadSwizzle1(col, swizzlePos.x);
-	vec3 col2 = quadSwizzle2(col, swizzlePos.yz);
+	vec4 col0 = quadSwizzle0(col, swizzlePos.x);
+	vec4 col1 = quadSwizzle1(col, swizzlePos.x);
+	vec4 col2 = quadSwizzle2(col, swizzlePos.yz);
 	
 	vec3 lighting = 2.0*vec3(col0.g, col1.g, col2.g) + 2.0*round(31.0*vec3(col0.r, col1.r, col2.r)/2.0);
+	lighting = ACESFitted(UV_ANIM.x*1.5*lighting);
 	
-	finalColor = vec4(ACESFitted(UV_ANIM.x*1.5*lighting), 1.0);
+	// Use average color of already rendered pixels on the edges of polygons.
+	float c = col0.a + col1.a + col2.a;
+	lighting = c > 0.0 ? (col0.a*col0.rgb + col1.a*col1.rgb + col2.a*col2.rgb) / c : lighting;
+	
+	finalColor = vec4(lighting, 1.0);
 }

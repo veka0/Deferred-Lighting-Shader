@@ -26,7 +26,7 @@ bool boxIntersection(vec3 ro, vec3 rd)
 {
 	vec3 m = 1.0/rd; // can precompute if traversing a set of aligned boxes
 	vec3 n = m*ro;   // can precompute if traversing a set of aligned boxes
-	vec3 k = 0.6*abs(m);
+	vec3 k = 0.601*abs(m);
 	vec3 t1 = -n - k;
 	vec3 t2 = -n + k;
 	float tN = max( max( t1.x, t1.y ), t1.z );
