@@ -88,12 +88,10 @@ void main()
 	return;
 #else 
 
-	vec3 swizzlePos = quadSwizzlePos();
-
 #if USE_TEXEL_AA
-	highp vec4 diffuse = texture2D_AA(TEXTURE_0, quadSwizzle0(uv0, swizzlePos.x));
+	highp vec4 diffuse = texture2D_AA(TEXTURE_0, uv0);
 #else
-	highp vec4 diffuse = texture2D(TEXTURE_0, quadSwizzle0(uv0, swizzlePos.x));
+	highp vec4 diffuse = texture2D(TEXTURE_0, uv0);
 #endif
 	
 #ifdef SEASONS_FAR
@@ -149,7 +147,7 @@ vec4 inColor = color;
 	vec3 hdrCol1 = mod(31.0*lighting, 64.0)/63.0;
 	vec3 hdrCol2 = 2.0*floor(31.0*lighting/64.0)/31.0;
 	
-	int index = quadSwizzleIndex(swizzlePos);
+	int index = quadSwizzleIndex();
 	finalColor = index == 0 ? vec4(hdrCol2.r, hdrCol1.r, prevCol.b, 1.0) : index == 1 ? vec4(hdrCol2.g, hdrCol1.g, prevCol.b, 1.0) : vec4(hdrCol2.b, hdrCol1.b, prevCol.b, 1.0);
 #else // BLEND
 	
@@ -164,7 +162,7 @@ vec4 inColor = color;
 	col.rgb -= dither;
 #endif
 	
-	int index = quadSwizzleIndex(swizzlePos);
+	int index = quadSwizzleIndex();
 	finalColor = index == 0 ? vec4(0.0, col.r, diffuse.r, 1.0) : index == 1 ? vec4(0.0, col.g, diffuse.g, 1.0) : vec4(0.0, col.b, diffuse.b, 1.0);
 
 #endif // BLEND

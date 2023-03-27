@@ -196,17 +196,15 @@ testColor.a *= alphaTestMultiplier;
 #if defined(IN_UI) || defined(UI_ENTITY)
 	gl_FragColor = L*color;
 #else
-	vec3 swizzlePos = quadSwizzlePos();
-	
-	int index = quadSwizzleIndex(swizzlePos);
 	
 	float dither = ditherSpread * bayer4[int(0.5*gl_FragCoord.y)%4 + 4*(int(0.5*gl_FragCoord.x)%4)];
 	
-	vec4 col = quadSwizzle0(L*color, swizzlePos.x);
+	vec4 col = L*color;
 	//apply fog
 	col.rgb = 0.5*mix( col.rgb, fogColor.rgb, fogColor.a )+dither;
-	color = quadSwizzle0(color-dither, swizzlePos.x);
+	color = color-dither;
 	
+	int index = quadSwizzleIndex();
 	gl_FragColor = index == 0 ? vec4(0.0, col.r, color.r, col.a) : index == 1 ? vec4(0.0, col.g, color.g, col.a) : vec4(0.0, col.b, color.b, col.a);
 #endif
 }

@@ -62,15 +62,12 @@ void main()
 #ifdef UI_ENTITY
 	gl_FragColor = vec4(col, base.a);
 #else
-	vec3 swizzlePos = quadSwizzlePos();
-	
-	int index = quadSwizzleIndex(swizzlePos);
 	
 	float dither = ditherSpread * bayer4[int(0.5*gl_FragCoord.y)%4 + 4*(int(0.5*gl_FragCoord.x)%4)];
 	col.rgb = 0.5*col+dither;
 	base.rgb -= dither;
 	
-	
+	int index = quadSwizzleIndex();
 	gl_FragColor = index == 0 ? vec4(0.0, col.r, base.r, base.a) : index == 1 ? vec4(0.0, col.g, base.g, base.a) : vec4(0.0, col.b, base.b, base.a);
 #endif
 }

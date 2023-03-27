@@ -102,3 +102,11 @@ int quadSwizzleIndex(vec3 pos) {
 	index = pos == quadSwizzle2(pos, pos) ? 2 : index;
 	return index;
 }
+
+int quadSwizzleIndex() {
+	vec3 pos = quadSwizzlePos();
+	int index = pos == quadSwizzle0(pos, pos) ? 0 : 3;
+	index = pos == quadSwizzle1(pos, pos) ? 1 : index;
+	index = pos == quadSwizzle2(pos, pos) ? 2 : index;
+	return index;
+}
