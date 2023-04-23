@@ -53,6 +53,8 @@ The following conditions has to be met in order to use this add-on
 ## Shadows Update Screenshots
 > Hover over a screenshot to see which map was used, click on it to get to the download page
 
+![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1099698023728173056/Screenshot_20230227-170708.png "Vanilla screenshot")
+
 ![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003915846520842/Screenshot_20230227-171453.png "Vanilla screenshot")
 
 ![Vanilla screenshot](https://cdn.discordapp.com/attachments/327203882180542484/1088003917020934154/Screenshot_20230227-020915.png "Vanilla screenshot")
